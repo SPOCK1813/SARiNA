@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SARiNA BIRTHDAY</title>
+
+<style>
+body {
+  margin: 0;
+  background: #000;
+  color: #00ff88;
+  font-family: sans-serif;
+  text-align: center;
+  overflow: hidden;
+}
+
+#countdown, #unlock, #effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+h1 {
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  background: transparent;
+  border: 2px solid #00ff88;
+  color: #00ff88;
+}
+
+#effect img {
+  width: 80vw;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.glow {
+  filter: drop-shadow(0 0 25px #00ff88);
+}
+</style>
+</head>
+
+<body>
+
+<div id="countdown">
+  <h1>SARiNA BIRTHDAY COUNTDOWN</h1>
+  <p id="time"></p>
+  <p>その時、姿が現れる</p>
+</div>
+
+<div id="unlock" style="display:none;">
+  <h1>UNLOCKED</h1>
+  <button onclick="start()">SHAKE TO UNLOCK</button>
+</div>
+
+<div id="effect" style="display:none;">
+  <img id="silhouette" src="silhouette.png" class="glow">
+  <img id="reveal" src="reveal.png">
+  <h1 id="text" style="display:none;">SARiNA BIRTHDAY 07.08</h1>
+</div>
+
+<script>
+const target = new Date("2026-07-08T00:00:00+09:00");
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = target - now;
+
+  if (diff <= 0) {
+    document.getElementById("countdown").style.display = "none";
+    document.getElementById("unlock").style.display = "block";
+    return;
+  }
+
+  const h = Math.floor(diff / 1000 / 60 / 60);
+  const m = Math.floor(diff / 1000 / 60) % 60;
+  const s = Math.floor(diff / 1000) % 60;
+
+  document.getElementById("time").innerText =
+    h + "h " + m + "m " + s + "s";
+}
+
+setInterval(updateCountdown, 1000);
+
+function start() {
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission().then(response => {
+      if (response === 'granted') {
+        listenShake();
+      }
+    });
+  } else {
+    listenShake();
+  }
+}
+
+let last = 0;
+
+function listenShake() {
+  window.addEventListener("devicemotion", function(e) {
+    const acc = e.accelerationIncludingGravity;
+    const total = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+
+    if (total > 25 && Date.now() - last > 1000) {
+      last = Date.now();
+      triggerEffect();
+    }
+  });
+}
+
+function triggerEffect() {
+  document.getElementById("unlock").style.display = "none";
+  document.getElementById("effect").style.display = "block";
+
+  const sil = document.getElementById("silhouette");
+  const rev = document.getElementById("reveal");
+
+  sil.style.opacity = 1;
+
+  setTimeout(() => {
+    sil.style.opacity = 0;
+    rev.style.opacity = 1;
+    document.getElementById("text").style.display = "block";
+  }, 1500);
+}
+</script>
+
+</body>
+</html>
