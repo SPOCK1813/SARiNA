@@ -1,180 +1,434 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SARiNA GAME</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SARiNA SWORD GAME</title>
+  <style>
+    * { box-sizing: border-box; }
 
-<style>
-* { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #000;
+      color: #8fffc1;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+    }
 
-body{
-  margin:0;
-  background:#000;
-  overflow:hidden;
-  font-family:sans-serif;
-}
+    .game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center 68%, rgba(0,255,136,0.12) 0%, rgba(0,0,0,0) 28%),
+        linear-gradient(to bottom, #000 0%, #000 100%);
+    }
 
-.game{
-  position:relative;
-  width:100vw;
-  height:100vh;
-  background:#000;
-}
+    .title {
+      position: absolute;
+      top: calc(env(safe-area-inset-top, 0px) + 22px);
+      width: 100%;
+      text-align: center;
+      letter-spacing: 5px;
+      font-size: 16px;
+      color: #baffdc;
+      text-shadow: 0 0 10px rgba(0,255,136,0.25);
+      z-index: 30;
+    }
 
-/* 上の文字 */
-.title{
-  position:absolute;
-  top:calc(env(safe-area-inset-top, 0px) + 22px);
-  width:100%;
-  text-align:center;
-  font-size:18px;
-  letter-spacing:6px;
-  color:#9dffca;
-  z-index:20;
-}
+    .score {
+      position: absolute;
+      top: calc(env(safe-area-inset-top, 0px) + 56px);
+      width: 100%;
+      text-align: center;
+      font-size: 46px;
+      font-weight: 900;
+      color: #66ff9d;
+      text-shadow:
+        0 0 10px rgba(0,255,136,0.95),
+        0 0 22px rgba(0,255,136,0.7),
+        0 0 40px rgba(0,255,136,0.35);
+      z-index: 30;
+    }
 
-.score{
-  position:absolute;
-  top:calc(env(safe-area-inset-top, 0px) + 58px);
-  width:100%;
-  text-align:center;
-  font-size:56px;
-  font-weight:bold;
-  color:#00ff88;
-  text-shadow:0 0 12px #00ff88;
-  z-index:20;
-}
+    .hint {
+      position: absolute;
+      bottom: 132px;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: rgba(186,255,220,0.82);
+      z-index: 30;
+    }
 
-/* キャラ */
-.player{
-  position:absolute;
-  left:80px;
-  bottom:82px;
-  width:80px;
-  z-index:10;
-}
+    .ground {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 74px;
+      height: 18px;
+      border-top: 2px solid rgba(0,255,136,0.85);
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(0,255,136,0.18) 0 16px,
+          rgba(0,0,0,0) 16px 32px
+        );
+      box-shadow:
+        0 0 12px rgba(0,255,136,0.18),
+        0 0 24px rgba(0,255,136,0.10);
+      animation: groundMove 0.7s linear infinite;
+      z-index: 5;
+    }
 
-.player img{
-  width:100%;
-  display:block;
-  image-rendering:pixelated;
-}
+    .player-lane {
+      position: absolute;
+      left: 62px;
+      bottom: 74px;
+      width: 96px;
+      height: 108px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 20;
+      pointer-events: none;
+    }
 
-.jump{
-  animation:jump 0.7s ease;
-}
+    .player {
+      width: 84px;
+      height: 84px;
+      display: block;
+      object-fit: contain;
+      image-rendering: pixelated;
+      filter:
+        drop-shadow(0 0 10px rgba(0,255,136,0.14))
+        drop-shadow(0 0 22px rgba(0,255,136,0.10));
+    }
 
-@keyframes jump{
-  0%{ transform:translateY(0); }
-  50%{ transform:translateY(-170px); }
-  100%{ transform:translateY(0); }
-}
+    .player.attack {
+      animation: playerPulse 0.18s ease-out;
+    }
 
-/* 障害物 */
-.obstacle{
-  position:absolute;
-  right:-60px;
-  bottom:82px;
-  width:42px;
-  height:42px;
-  object-fit:contain;
-  display:block;
-  image-rendering:pixelated;
-  animation:move 2.2s linear infinite;
-  z-index:9;
-}
+    .sword {
+      position: absolute;
+      left: 130px;
+      bottom: 112px;
+      width: 120px;
+      height: 16px;
+      background: linear-gradient(90deg, rgba(180,255,220,0.2), #00ff88 40%, #d9fff0 75%, rgba(255,255,255,0.9));
+      border-radius: 999px;
+      box-shadow:
+        0 0 12px rgba(0,255,136,0.9),
+        0 0 26px rgba(0,255,136,0.55),
+        0 0 42px rgba(0,255,136,0.25);
+      transform-origin: left center;
+      transform: scaleX(0) skewX(-18deg);
+      opacity: 0;
+      z-index: 25;
+      pointer-events: none;
+    }
 
-@keyframes move{
-  from{ right:-60px; }
-  to{ right:100vw; }
-}
+    .sword.active {
+      animation: slash 0.22s ease-out forwards;
+    }
 
-/* 地面 */
-.ground{
-  position:absolute;
-  bottom:80px;
-  width:100%;
-  height:2px;
-  background:#00ff88;
-  box-shadow:0 0 8px #00ff88;
-}
-</style>
+    .enemy {
+      position: absolute;
+      right: -74px;
+      bottom: 92px;
+      width: 48px;
+      height: 76px;
+      border: 2px solid rgba(0,255,136,0.75);
+      border-radius: 14px;
+      background: linear-gradient(to bottom, rgba(0,255,136,0.08), rgba(0,255,136,0.18));
+      box-shadow:
+        0 0 16px rgba(0,255,136,0.16),
+        inset 0 0 14px rgba(0,255,136,0.08);
+      z-index: 12;
+    }
+
+    .enemy.hit {
+      animation: enemyBreak 0.28s ease-out forwards;
+    }
+
+    .flash {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.10);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .flash.active {
+      animation: flashFx 0.18s ease-out;
+    }
+
+    .slash-text {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      transform: translateX(-50%) scale(0.8);
+      opacity: 0;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #eafff5;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.95),
+        0 0 18px rgba(0,255,136,0.65);
+      z-index: 35;
+      pointer-events: none;
+    }
+
+    .slash-text.show {
+      animation: slashTextFx 0.34s ease-out;
+    }
+
+    .game-over {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: rgba(0,0,0,0.48);
+      z-index: 50;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .game-over h2 {
+      margin: 0;
+      font-size: 44px;
+      letter-spacing: 4px;
+      color: #effff5;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.95),
+        0 0 18px rgba(0,255,136,0.65);
+    }
+
+    .game-over p {
+      margin: 16px 0 0;
+      font-size: 18px;
+      color: #b8ffd9;
+    }
+
+    .retry {
+      margin-top: 22px;
+      padding: 14px 22px;
+      border: 2px solid #00ff88;
+      background: rgba(0,255,136,0.08);
+      color: #effff5;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    @keyframes groundMove {
+      from { background-position-x: 0; }
+      to   { background-position-x: -32px; }
+    }
+
+    @keyframes slash {
+      0% {
+        opacity: 0;
+        transform: scaleX(0.1) skewX(-18deg);
+      }
+      30% {
+        opacity: 1;
+        transform: scaleX(1.05) skewX(-18deg);
+      }
+      100% {
+        opacity: 0;
+        transform: scaleX(1.15) skewX(-18deg);
+      }
+    }
+
+    @keyframes playerPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes enemyBreak {
+      0% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.35) rotate(18deg);
+      }
+    }
+
+    @keyframes flashFx {
+      0% { opacity: 0; }
+      40% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes slashTextFx {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.78);
+      }
+      30% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(1.08);
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="game" id="game">
+    <div class="title">SARiNA GREEN SWORD</div>
+    <div class="score" id="score">0</div>
+    <div class="hint">TAP TO SLASH</div>
 
-<div class="game">
-  <div class="title">SARiNA PIXEL GAME</div>
-  <div class="score" id="score">10</div>
+    <div class="player-lane">
+      <img src="sarina-pixel.png" alt="player" class="player" id="player" />
+    </div>
 
-  <div class="player" id="player">
-    <img src="sarina-pixel.png" alt="player">
+    <div class="sword" id="sword"></div>
+
+    <div class="enemy" id="enemy"></div>
+
+    <div class="ground"></div>
+
+    <div class="flash" id="flash"></div>
+    <div class="slash-text" id="slashText">SLASH!</div>
+
+    <div class="game-over" id="gameOver">
+      <h2>GAME OVER</h2>
+      <p id="finalScore">0体撃破</p>
+      <button class="retry" id="retryBtn">RETRY</button>
+    </div>
   </div>
 
-  <img src="obstacle.png" class="obstacle" id="obstacle" alt="obstacle">
+  <script>
+    const player = document.getElementById("player");
+    const sword = document.getElementById("sword");
+    const enemy = document.getElementById("enemy");
+    const score = document.getElementById("score");
+    const flash = document.getElementById("flash");
+    const slashText = document.getElementById("slashText");
+    const gameOver = document.getElementById("gameOver");
+    const finalScore = document.getElementById("finalScore");
+    const retryBtn = document.getElementById("retryBtn");
 
-  <div class="ground"></div>
-</div>
+    let killCount = 0;
+    let attacking = false;
+    let gameEnded = false;
 
-<script>
-const player = document.getElementById("player");
-const obstacle = document.getElementById("obstacle");
-const score = document.getElementById("score");
+    let enemyX = window.innerWidth + 80;
+    let enemySpeed = 6.5;
 
-let jumping = false;
-let time = 10;
-let gameOver = false;
+    function resetEnemy() {
+      enemyX = window.innerWidth + Math.random() * 180 + 40;
+      enemy.classList.remove("hit");
+      enemy.style.display = "block";
+    }
 
-function jump(){
-  if(jumping || gameOver) return;
-  jumping = true;
-  player.classList.add("jump");
+    function updateEnemy() {
+      if (gameEnded) return;
 
-  setTimeout(()=>{
-    player.classList.remove("jump");
-    jumping = false;
-  },700);
-}
+      enemyX -= enemySpeed;
+      enemy.style.right = (window.innerWidth - enemyX) + "px";
 
-window.addEventListener("click", jump);
-window.addEventListener("touchstart", jump, { passive:true });
+      if (enemyX < -100) {
+        gameEnded = true;
+        endGame();
+        return;
+      }
 
-const timer = setInterval(()=>{
-  if(gameOver) return;
+      checkCollision();
+      requestAnimationFrame(updateEnemy);
+    }
 
-  time--;
-  score.textContent = time;
+    function attack() {
+      if (attacking || gameEnded) return;
+      attacking = true;
 
-  if(time <= 0){
-    gameOver = true;
-    score.textContent = "CLEAR";
-    obstacle.style.animation = "none";
-  }
-},1000);
+      player.classList.add("attack");
+      sword.classList.remove("active");
+      void sword.offsetWidth;
+      sword.classList.add("active");
 
-function checkHit(){
-  if(gameOver) return;
+      if (navigator.vibrate) navigator.vibrate(18);
 
-  const p = player.getBoundingClientRect();
-  const o = obstacle.getBoundingClientRect();
+      const slashLeft = 130;
+      const slashRight = slashLeft + 120;
+      const enemyLeft = enemyX - 48;
+      const enemyRight = enemyX;
 
-  /* 当たり判定を少し甘くする */
-  const hit =
-    p.right - 12 > o.left &&
-    p.left + 12 < o.right &&
-    p.bottom - 8 > o.top &&
-    p.top + 8 < o.bottom;
+      const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
 
-  if(hit){
-    gameOver = true;
-    score.textContent = "GAME OVER";
-    obstacle.style.animation = "none";
-  }
-}
+      if (inRange) {
+        killCount += 1;
+        score.textContent = killCount;
+        enemy.classList.add("hit");
+        flash.classList.remove("active");
+        slashText.classList.remove("show");
+        void flash.offsetWidth;
+        void slashText.offsetWidth;
+        flash.classList.add("active");
+        slashText.classList.add("show");
 
-setInterval(checkHit, 20);
-</script>
+        setTimeout(() => {
+          resetEnemy();
+        }, 180);
+      }
 
+      setTimeout(() => {
+        player.classList.remove("attack");
+        attacking = false;
+      }, 220);
+    }
+
+    function checkCollision() {
+      if (gameEnded) return;
+
+      const playerZoneLeft = 62;
+      const playerZoneRight = 62 + 84;
+
+      const enemyLeft = enemyX - 48;
+      const enemyRight = enemyX;
+
+      if (enemyRight > playerZoneLeft + 16 && enemyLeft < playerZoneRight - 10) {
+        gameEnded = true;
+        endGame();
+      }
+    }
+
+    function endGame() {
+      finalScore.textContent = killCount + "体撃破";
+      gameOver.style.display = "flex";
+    }
+
+    function restartGame() {
+      killCount = 0;
+      score.textContent = "0";
+      gameEnded = false;
+      attacking = false;
+      gameOver.style.display = "none";
+      resetEnemy();
+      requestAnimationFrame(updateEnemy);
+    }
+
+    window.addEventListener("click", attack);
+    window.addEventListener("touchstart", attack, { passive: true });
+    retryBtn.addEventListener("click", restartGame);
+
+    resetEnemy();
+    requestAnimationFrame(updateEnemy);
+  </script>
 </body>
 </html>
