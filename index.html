@@ -3,16 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SARiNA BIRTHDAY</title>
+  <title>SARiNA 07.08</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -25,7 +21,6 @@
       position: relative;
     }
 
-    /* 背景画像レイヤー */
     #bgLayer {
       position: fixed;
       inset: 0;
@@ -37,13 +32,12 @@
       transition: background-image 0.8s ease;
     }
 
-    /* 黒オーバーレイ */
     #bgOverlay {
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at center, rgba(0,255,136,0.10) 0%, rgba(0,0,0,0) 45%),
-        linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0.72));
+        radial-gradient(circle at center, rgba(0,255,136,0.10) 0%, rgba(0,0,0,0) 42%),
+        linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.78));
       z-index: -2;
       pointer-events: none;
     }
@@ -60,112 +54,135 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 8vh 20px;
     }
 
-    h1, h2, h3, p {
-      margin: 0;
+    h1, h2, h3, p { margin: 0; }
+
+    .pre-title {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #8fffc1;
+      margin-bottom: 18px;
+      opacity: 0.95;
+      text-shadow: 0 0 10px rgba(0,255,136,0.28);
     }
 
     .count-title {
-      font-size: clamp(34px, 8vw, 64px);
-      line-height: 1.05;
+      font-size: clamp(46px, 14vw, 104px);
+      line-height: 0.95;
       letter-spacing: 4px;
-      font-weight: 800;
-      color: #dfffea;
+      font-weight: 900;
+      color: #f2fff7;
       text-shadow:
-        0 0 6px rgba(0,255,136,0.9),
-        0 0 16px rgba(0,255,136,0.8),
-        0 0 34px rgba(0,255,136,0.55),
-        0 0 70px rgba(0,255,136,0.25);
-      animation: heroGlow 1.8s ease-in-out infinite alternate;
+        0 0 8px rgba(0,255,136,1),
+        0 0 18px rgba(0,255,136,0.9),
+        0 0 42px rgba(0,255,136,0.65),
+        0 0 86px rgba(0,255,136,0.28);
+      animation: heroGlow 1.7s ease-in-out infinite alternate;
+    }
+
+    .mystery-line {
+      margin-top: 18px;
+      font-size: 15px;
+      letter-spacing: 2px;
+      color: #d9ffee;
+      opacity: 0.96;
+    }
+
+    #time {
+      margin-top: 24px;
+      font-weight: 900;
+      line-height: 1.05;
+      font-size: clamp(28px, 8vw, 58px);
+      letter-spacing: 2px;
+      color: #f8fffb;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.9),
+        0 0 18px rgba(0,255,136,0.7);
+    }
+
+    #time .sec {
+      display: inline-block;
+      font-size: clamp(52px, 15vw, 104px);
+      color: #00ff88;
+      text-shadow:
+        0 0 10px rgba(0,255,136,1),
+        0 0 22px rgba(0,255,136,0.95),
+        0 0 42px rgba(0,255,136,0.7);
+      animation: secBlink 0.9s infinite;
     }
 
     .count-sub {
       margin-top: 18px;
       font-size: 14px;
       letter-spacing: 2px;
-      color: #8dffc3;
+      color: #9dffca;
       opacity: 0.95;
     }
 
-    #time {
-      margin-top: 22px;
-      font-weight: 800;
-      line-height: 1.1;
-      font-size: clamp(22px, 5.5vw, 38px);
-      letter-spacing: 2px;
-      color: #f2fff7;
-      text-shadow:
-        0 0 6px rgba(0,255,136,0.85),
-        0 0 16px rgba(0,255,136,0.6);
-    }
-
-    #time .sec {
-      display: inline-block;
-      font-size: clamp(34px, 8vw, 58px);
-      color: #00ff88;
-      text-shadow:
-        0 0 8px rgba(0,255,136,1),
-        0 0 18px rgba(0,255,136,0.9),
-        0 0 36px rgba(0,255,136,0.65);
-      animation: secBlink 1s infinite;
-    }
-
     .day-change-note {
-      margin-top: 16px;
-      padding: 12px 16px;
-      max-width: 340px;
+      margin-top: 22px;
+      padding: 14px 18px;
+      max-width: 360px;
       font-size: 13px;
       line-height: 1.8;
-      color: #dbffee;
-      border: 1px solid rgba(0,255,136,0.25);
-      border-radius: 14px;
-      background: rgba(0,0,0,0.28);
+      color: #f1fff7;
+      border: 1px solid rgba(0,255,136,0.24);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.32);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      box-shadow: 0 0 16px rgba(0,255,136,0.10);
+      box-shadow:
+        0 0 18px rgba(0,255,136,0.08),
+        inset 0 0 8px rgba(0,255,136,0.04);
     }
 
     .unlock-title {
-      font-size: clamp(30px, 8vw, 56px);
+      font-size: clamp(34px, 10vw, 64px);
       letter-spacing: 4px;
-      font-weight: 800;
-      color: #e9fff3;
+      font-weight: 900;
+      color: #effff5;
       text-shadow:
-        0 0 6px rgba(0,255,136,0.9),
-        0 0 18px rgba(0,255,136,0.75),
-        0 0 40px rgba(0,255,136,0.35);
+        0 0 8px rgba(0,255,136,0.95),
+        0 0 20px rgba(0,255,136,0.75),
+        0 0 42px rgba(0,255,136,0.30);
     }
 
     .unlock-desc {
       margin-top: 16px;
       font-size: 14px;
-      line-height: 1.8;
-      color: #a6ffd0;
+      line-height: 1.9;
+      color: #b5ffd8;
       max-width: 320px;
     }
 
+    .unlock-tip {
+      margin-top: 12px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #7fffbb;
+      opacity: 0.88;
+    }
+
     button {
-      margin-top: 18px;
-      padding: 16px 28px;
+      margin-top: 20px;
+      padding: 18px 28px;
       border: 2px solid #00ff88;
-      background: rgba(0, 255, 136, 0.05);
-      color: #eafff3;
+      background: rgba(0,255,136,0.06);
+      color: #effff6;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 1px;
       border-radius: 999px;
       box-shadow:
-        0 0 12px rgba(0,255,136,0.22),
-        inset 0 0 12px rgba(0,255,136,0.08);
+        0 0 14px rgba(0,255,136,0.24),
+        inset 0 0 14px rgba(0,255,136,0.06);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
+    button:active { transform: scale(0.98); }
 
     #effect {
       display: none;
@@ -178,15 +195,13 @@
       overflow: hidden;
     }
 
-    .flash {
-      animation: flashBg 0.45s ease-out;
-    }
+    .flash { animation: flashBg 0.45s ease-out; }
 
     .stage {
       position: relative;
-      width: min(84vw, 420px);
+      width: min(88vw, 450px);
       aspect-ratio: 3 / 4;
-      margin: 0 auto 22px;
+      margin: 0 auto 20px;
     }
 
     .stage img {
@@ -200,42 +215,42 @@
 
     #silhouette {
       filter:
-        brightness(0.6)
+        brightness(0.58)
         contrast(1.15)
         drop-shadow(0 0 10px rgba(0,255,136,0.8))
-        drop-shadow(0 0 26px rgba(0,255,136,0.45));
+        drop-shadow(0 0 28px rgba(0,255,136,0.45));
       transform: scale(1.03);
     }
 
     #reveal {
       filter:
-        drop-shadow(0 0 10px rgba(0,255,136,0.18))
-        drop-shadow(0 0 30px rgba(0,255,136,0.10));
+        drop-shadow(0 0 12px rgba(0,255,136,0.20))
+        drop-shadow(0 0 32px rgba(0,255,136,0.10));
     }
 
     #birthdayText {
       display: none;
       opacity: 0;
       transform: translateY(18px);
-      font-size: clamp(28px, 8vw, 54px);
+      font-size: clamp(34px, 10vw, 64px);
       font-weight: 900;
-      line-height: 1.06;
+      line-height: 1.0;
       letter-spacing: 3px;
-      color: #effff5;
+      color: #f2fff8;
       text-shadow:
-        0 0 8px rgba(0,255,136,0.85),
-        0 0 18px rgba(0,255,136,0.7),
-        0 0 42px rgba(0,255,136,0.35);
+        0 0 10px rgba(0,255,136,0.95),
+        0 0 22px rgba(0,255,136,0.78),
+        0 0 48px rgba(0,255,136,0.34);
       animation: textPulse 1.8s ease-in-out infinite;
       z-index: 3;
     }
 
     #birthdayText .small {
       display: block;
-      margin-top: 10px;
-      font-size: clamp(14px, 4vw, 22px);
+      margin-top: 12px;
+      font-size: clamp(15px, 4vw, 24px);
       letter-spacing: 5px;
-      color: #8fffc1;
+      color: #9bffca;
     }
 
     .fall-layer {
@@ -258,9 +273,9 @@
     .scroll-guide {
       margin-top: 24px;
       font-size: 12px;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       color: #7cffb8;
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
     .scroll-guide::after {
@@ -274,35 +289,35 @@
     .section {
       position: relative;
       z-index: 2;
-      padding: 84px 20px;
+      padding: 88px 20px;
       border-top: 1px solid rgba(0,255,136,0.18);
       background:
-        linear-gradient(to bottom, rgba(0,0,0,0.84), rgba(0,0,0,0.94));
+        linear-gradient(to bottom, rgba(0,0,0,0.84), rgba(0,0,0,0.96));
     }
 
     .section h2 {
-      font-size: clamp(28px, 7vw, 42px);
+      font-size: clamp(30px, 8vw, 46px);
       letter-spacing: 4px;
       margin-bottom: 20px;
-      color: #ebfff3;
+      color: #edfff4;
       text-shadow:
         0 0 8px rgba(0,255,136,0.65),
         0 0 20px rgba(0,255,136,0.35);
     }
 
     .section p {
-      max-width: 700px;
+      max-width: 760px;
       margin: 0 auto;
-      line-height: 1.9;
+      line-height: 1.95;
       font-size: 16px;
-      color: #d6ffe7;
+      color: #d9ffe8;
     }
 
     .photo-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
-      max-width: 900px;
+      max-width: 920px;
       margin: 28px auto 0;
     }
 
@@ -331,7 +346,7 @@
     }
 
     .end-message {
-      font-size: clamp(26px, 8vw, 48px);
+      font-size: clamp(28px, 9vw, 52px);
       font-weight: 900;
       letter-spacing: 4px;
       color: #effff5;
@@ -340,24 +355,16 @@
         0 0 22px rgba(0,255,136,0.42);
     }
 
-    .spacer {
-      height: 40px;
-    }
+    .spacer { height: 40px; }
 
     @keyframes heroGlow {
-      from {
-        opacity: 0.9;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(-4px);
-      }
+      from { opacity: 0.9; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(-4px); }
     }
 
     @keyframes secBlink {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.38; }
+      50% { opacity: 0.32; }
     }
 
     @keyframes flashBg {
@@ -367,12 +374,8 @@
     }
 
     @keyframes textPulse {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-3px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
     }
 
     @keyframes fallDown {
@@ -380,9 +383,7 @@
         transform: translateY(0) rotate(0deg);
         opacity: 0;
       }
-      10% {
-        opacity: 1;
-      }
+      10% { opacity: 1; }
       100% {
         transform: translateY(115vh) rotate(240deg);
         opacity: 0;
@@ -395,13 +396,8 @@
     }
 
     @media (max-width: 640px) {
-      .photo-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section {
-        padding: 72px 18px;
-      }
+      .photo-grid { grid-template-columns: 1fr; }
+      .section { padding: 72px 18px; }
     }
   </style>
 </head>
@@ -412,19 +408,22 @@
 
   <div class="hero-wrap">
     <div class="hero-screen" id="countdown">
+      <p class="pre-title">07.08 / 00:00 ONLY</p>
       <h1 class="count-title">SARiNA<br>BIRTHDAY</h1>
       <p id="time"></p>
+      <p class="mystery-line">このページは、その時まで未完成。</p>
       <p class="count-sub">その時、姿が現れる</p>
       <div class="day-change-note" id="dayChangeNote"></div>
     </div>
 
     <div class="hero-screen" id="unlock" style="display:none;">
       <h2 class="unlock-title">UNLOCKED</h2>
-      <button onclick="start()">ここをタップして<br>シェイクを有効化</button>
+      <button onclick="start()">ここをタップ →<br>振って解放</button>
       <p class="unlock-desc" id="tapGuide">
         まずここをタップして許可<br>
         そのあとスマホを振って解放
       </p>
+      <p class="unlock-tip">0:00以降だけ解放</p>
     </div>
 
     <div class="hero-screen" id="effect">
