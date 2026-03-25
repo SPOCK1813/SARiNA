@@ -6,6 +6,8 @@
 <title>SARiNA GAME</title>
 
 <style>
+* { box-sizing: border-box; }
+
 body{
   margin:0;
   background:#000;
@@ -17,12 +19,38 @@ body{
   position:relative;
   width:100vw;
   height:100vh;
+  background:#000;
 }
 
+/* 上の文字 */
+.title{
+  position:absolute;
+  top:calc(env(safe-area-inset-top, 0px) + 22px);
+  width:100%;
+  text-align:center;
+  font-size:18px;
+  letter-spacing:6px;
+  color:#9dffca;
+  z-index:20;
+}
+
+.score{
+  position:absolute;
+  top:calc(env(safe-area-inset-top, 0px) + 58px);
+  width:100%;
+  text-align:center;
+  font-size:56px;
+  font-weight:bold;
+  color:#00ff88;
+  text-shadow:0 0 12px #00ff88;
+  z-index:20;
+}
+
+/* キャラ */
 .player{
   position:absolute;
   left:80px;
-  bottom:100px;
+  bottom:82px;
   width:80px;
   z-index:10;
 }
@@ -30,34 +58,31 @@ body{
 .player img{
   width:100%;
   display:block;
+  image-rendering:pixelated;
 }
 
+.jump{
+  animation:jump 0.7s ease;
+}
+
+@keyframes jump{
+  0%{ transform:translateY(0); }
+  50%{ transform:translateY(-170px); }
+  100%{ transform:translateY(0); }
+}
+
+/* 障害物 */
 .obstacle{
   position:absolute;
   right:-60px;
-  bottom:100px;
-  width:60px;
-  height:auto;
+  bottom:82px;
+  width:42px;
+  height:42px;
   object-fit:contain;
-  animation:move 2s linear infinite;
-}
-
-.ground{
-  position:absolute;
-  bottom:80px;
-  width:100%;
-  height:2px;
-  background:#00ff88;
-}
-
-.score{
-  position:absolute;
-  top:40px;
-  width:100%;
-  text-align:center;
-  font-size:48px;
-  color:#00ff88;
-  z-index:20;
+  display:block;
+  image-rendering:pixelated;
+  animation:move 2.2s linear infinite;
+  z-index:9;
 }
 
 @keyframes move{
@@ -65,14 +90,14 @@ body{
   to{ right:100vw; }
 }
 
-.jump{
-  animation:jump 0.6s ease;
-}
-
-@keyframes jump{
-  0%{ transform:translateY(0); }
-  50%{ transform:translateY(-150px); }
-  100%{ transform:translateY(0); }
+/* 地面 */
+.ground{
+  position:absolute;
+  bottom:80px;
+  width:100%;
+  height:2px;
+  background:#00ff88;
+  box-shadow:0 0 8px #00ff88;
 }
 </style>
 </head>
@@ -80,17 +105,16 @@ body{
 <body>
 
 <div class="game">
-
+  <div class="title">SARiNA PIXEL GAME</div>
   <div class="score" id="score">10</div>
 
   <div class="player" id="player">
     <img src="sarina-pixel.png" alt="player">
   </div>
 
-  <img src="obstacle.png" class="obstacle" id="obstacle">
+  <img src="obstacle.png" class="obstacle" id="obstacle" alt="obstacle">
 
   <div class="ground"></div>
-
 </div>
 
 <script>
@@ -110,7 +134,7 @@ function jump(){
   setTimeout(()=>{
     player.classList.remove("jump");
     jumping = false;
-  },600);
+  },700);
 }
 
 window.addEventListener("click", jump);
@@ -132,22 +156,24 @@ const timer = setInterval(()=>{
 function checkHit(){
   if(gameOver) return;
 
-  const playerRect = player.getBoundingClientRect();
-  const obstacleRect = obstacle.getBoundingClientRect();
+  const p = player.getBoundingClientRect();
+  const o = obstacle.getBoundingClientRect();
 
-  if(
-    playerRect.right > obstacleRect.left &&
-    playerRect.left < obstacleRect.right &&
-    playerRect.bottom > obstacleRect.top &&
-    playerRect.top < obstacleRect.bottom
-  ){
+  /* 当たり判定を少し甘くする */
+  const hit =
+    p.right - 12 > o.left &&
+    p.left + 12 < o.right &&
+    p.bottom - 8 > o.top &&
+    p.top + 8 < o.bottom;
+
+  if(hit){
     gameOver = true;
     score.textContent = "GAME OVER";
     obstacle.style.animation = "none";
   }
 }
 
-setInterval(checkHit, 10);
+setInterval(checkHit, 20);
 </script>
 
 </body>
