@@ -352,57 +352,56 @@
   </div>
 
   <script>
-    const player = document.getElementById("player");
-    const sword = document.getElementById("sword");
-    const enemy = document.getElementById("enemy");
-    const score = document.getElementById("score");
-    const flash = document.getElementById("flash");
-    const slashText = document.getElementById("slashText");
-    const gameOver = document.getElementById("gameOver");
-    const finalScore = document.getElementById("finalScore");
-    const retryBtn = document.getElementById("retryBtn");
+const player = document.getElementById("player");
+const sword = document.getElementById("sword");
+const enemy = document.getElementById("enemy");
+const score = document.getElementById("score");
+const flash = document.getElementById("flash");
+const slashText = document.getElementById("slashText");
+const gameOver = document.getElementById("gameOver");
+const finalScore = document.getElementById("finalScore");
+const retryBtn = document.getElementById("retryBtn");
 
-    let killCount = 0;
-    let attacking = false;
-    let gameEnded = false;
-    let canAttack = false;
-    
-    setTimeout(() => {
+let killCount = 0;
+let attacking = false;
+let gameEnded = false;
+let canAttack = false;
+
+let enemyX = window.innerWidth + 80;
+let enemySpeed = 6.5;
+
+setTimeout(() => {
   canAttack = true;
-    }, 600);
+}, 600);
 
-    let enemyX = window.innerWidth + 80;
-    let enemySpeed = 6.5;
+function resetEnemy() {
+  enemyX = window.innerWidth + Math.random() * 180 + 40;
+  enemy.classList.remove("hit");
+  enemy.style.display = "block";
+}
 
-    function resetEnemy() {
-      enemyX = window.innerWidth + Math.random() * 180 + 40;
-      enemy.classList.remove("hit");
-      enemy.style.display = "block";
-    }
+function updateEnemy() {
+  if (gameEnded) return;
 
-    function updateEnemy() {
-      if (gameEnded) return;
+  enemyX -= enemySpeed;
+  enemy.style.right = (window.innerWidth - enemyX) + "px";
 
-      enemyX -= enemySpeed;
-      enemy.style.right = (window.innerWidth - enemyX) + "px";
+  if (enemyX < -100) {
+    gameEnded = true;
+    endGame();
+    return;
+  }
 
-      if (enemyX < -100) {
-        gameEnded = true;
-        endGame();
-        return;
-      }
+  checkCollision();
+  requestAnimationFrame(updateEnemy);
+}
 
-      checkCollision();
-      requestAnimationFrame(updateEnemy);
-    }
-
-    function attack() {
+function attack() {
   if (!canAttack || attacking || gameEnded) return;
 
   attacking = true;
 
   player.classList.add("attack");
-
   sword.classList.remove("active");
   void sword.offsetWidth;
   sword.classList.add("active");
@@ -424,10 +423,8 @@
 
     flash.classList.remove("active");
     slashText.classList.remove("show");
-
     void flash.offsetWidth;
     void slashText.offsetWidth;
-
     flash.classList.add("active");
     slashText.classList.add("show");
 
@@ -440,50 +437,49 @@
     player.classList.remove("attack");
     attacking = false;
   }, 220);
-    }
+}
 
-      setTimeout(() => {
-        player.classList.remove("attack");
-        attacking = false;
-      }, 220);
-    }
+function checkCollision() {
+  if (gameEnded) return;
 
-    function checkCollision() {
-      if (gameEnded) return;
+  const playerZoneLeft = 62;
+  const playerZoneRight = 62 + 84;
 
-      const playerZoneLeft = 62;
-      const playerZoneRight = 62 + 84;
+  const enemyLeft = enemyX - 48;
+  const enemyRight = enemyX;
 
-      const enemyLeft = enemyX - 48;
-      const enemyRight = enemyX;
+  if (enemyRight > playerZoneLeft + 16 && enemyLeft < playerZoneRight - 10) {
+    gameEnded = true;
+    endGame();
+  }
+}
 
-      if (enemyRight > playerZoneLeft + 16 && enemyLeft < playerZoneRight - 10) {
-        gameEnded = true;
-        endGame();
-      }
-    }
+function endGame() {
+  finalScore.textContent = killCount + "体撃破";
+  gameOver.style.display = "flex";
+}
 
-    function endGame() {
-      finalScore.textContent = killCount + "体撃破";
-      gameOver.style.display = "flex";
-    }
+function restartGame() {
+  killCount = 0;
+  score.textContent = "0";
+  gameEnded = false;
+  attacking = false;
+  canAttack = false;
+  gameOver.style.display = "none";
 
-    function restartGame() {
-      killCount = 0;
-      score.textContent = "0";
-      gameEnded = false;
-      attacking = false;
-      gameOver.style.display = "none";
-      resetEnemy();
-      requestAnimationFrame(updateEnemy);
-    }
+  setTimeout(() => {
+    canAttack = true;
+  }, 600);
 
-    window.addEventListener("click", attack);
-    window.addEventListener("touchstart", attack, { passive: true });
-    retryBtn.addEventListener("click", restartGame);
+  resetEnemy();
+  requestAnimationFrame(updateEnemy);
+}
 
-    resetEnemy();
-    requestAnimationFrame(updateEnemy);
-  </script>
+window.addEventListener("click", attack);
+retryBtn.addEventListener("click", restartGame);
+
+resetEnemy();
+requestAnimationFrame(updateEnemy);
+</script>
 </body>
 </html>
