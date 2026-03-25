@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SARiNA 07.08</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: #000;
+      color: #00ff88;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    #bgLayer {
+      position: fixed;
+      inset: 0;
+      background-image: url("before30.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -3;
+      transition: background-image 0.8s ease;
+    }
+
+    #bgOverlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(0,255,136,0.10) 0%, rgba(0,0,0,0) 42%),
+        linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.78));
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .hero-wrap {
+      position: relative;
+      min-height: 100vh;
+      z-index: 2;
+    }
+
+    .hero-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8vh 20px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .pre-title {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #8fffc1;
+      margin-bottom: 18px;
+      opacity: 0.95;
+      text-shadow: 0 0 10px rgba(0,255,136,0.28);
+    }
+
+    .count-title {
+      font-size: clamp(46px, 14vw, 104px);
+      line-height: 0.95;
+      letter-spacing: 4px;
+      font-weight: 900;
+      color: #f2fff7;
+      text-shadow:
+        0 0 8px rgba(0,255,136,1),
+        0 0 18px rgba(0,255,136,0.9),
+        0 0 42px rgba(0,255,136,0.65),
+        0 0 86px rgba(0,255,136,0.28);
+      animation: heroGlow 1.7s ease-in-out infinite alternate;
+    }
+
+    .mystery-line {
+      margin-top: 18px;
+      font-size: 15px;
+      letter-spacing: 2px;
+      color: #d9ffee;
+      opacity: 0.96;
+    }
+
+    #time {
+      margin-top: 24px;
+      font-weight: 900;
+      line-height: 1.05;
+      font-size: clamp(28px, 8vw, 58px);
+      letter-spacing: 2px;
+      color: #f8fffb;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.9),
+        0 0 18px rgba(0,255,136,0.7);
+    }
+
+    #time .sec {
+      display: inline-block;
+      font-size: clamp(52px, 15vw, 104px);
+      color: #00ff88;
+      text-shadow:
+        0 0 10px rgba(0,255,136,1),
+        0 0 22px rgba(0,255,136,0.95),
+        0 0 42px rgba(0,255,136,0.7);
+      animation: secBlink 0.9s infinite;
+    }
+
+    .count-sub {
+      margin-top: 18px;
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #9dffca;
+      opacity: 0.95;
+    }
+
+    .day-change-note {
+      margin-top: 22px;
+      padding: 14px 18px;
+      max-width: 360px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #f1fff7;
+      border: 1px solid rgba(0,255,136,0.24);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.32);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow:
+        0 0 18px rgba(0,255,136,0.08),
+        inset 0 0 8px rgba(0,255,136,0.04);
+    }
+
+    .unlock-title {
+      font-size: clamp(34px, 10vw, 64px);
+      letter-spacing: 4px;
+      font-weight: 900;
+      color: #effff5;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.95),
+        0 0 20px rgba(0,255,136,0.75),
+        0 0 42px rgba(0,255,136,0.30);
+    }
+
+    .unlock-desc {
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.9;
+      color: #b5ffd8;
+      max-width: 320px;
+    }
+
+    .unlock-tip {
+      margin-top: 12px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #7fffbb;
+      opacity: 0.88;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 18px 28px;
+      border: 2px solid #00ff88;
+      background: rgba(0,255,136,0.06);
+      color: #effff6;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      border-radius: 999px;
+      box-shadow:
+        0 0 14px rgba(0,255,136,0.24),
+        inset 0 0 14px rgba(0,255,136,0.06);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    button:active { transform: scale(0.98); }
+
+    #effect {
+      display: none;
+      position: relative;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .flash { animation: flashBg 0.45s ease-out; }
+
+    .stage {
+      position: relative;
+      width: min(88vw, 450px);
+      aspect-ratio: 3 / 4;
+      margin: 0 auto 20px;
+    }
+
+    .stage img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+    }
+
+    #silhouette {
+      filter:
+        brightness(0.58)
+        contrast(1.15)
+        drop-shadow(0 0 10px rgba(0,255,136,0.8))
+        drop-shadow(0 0 28px rgba(0,255,136,0.45));
+      transform: scale(1.03);
+    }
+
+    #reveal {
+      filter:
+        drop-shadow(0 0 12px rgba(0,255,136,0.20))
+        drop-shadow(0 0 32px rgba(0,255,136,0.10));
+    }
+
+    #birthdayText {
+      display: none;
+      opacity: 0;
+      transform: translateY(18px);
+      font-size: clamp(34px, 10vw, 64px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: 3px;
+      color: #f2fff8;
+      text-shadow:
+        0 0 10px rgba(0,255,136,0.95),
+        0 0 22px rgba(0,255,136,0.78),
+        0 0 48px rgba(0,255,136,0.34);
+      animation: textPulse 1.8s ease-in-out infinite;
+      z-index: 3;
+    }
+
+    #birthdayText .small {
+      display: block;
+      margin-top: 12px;
+      font-size: clamp(15px, 4vw, 24px);
+      letter-spacing: 5px;
+      color: #9bffca;
+    }
+
+    .fall-layer {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .fall-item {
+      position: absolute;
+      top: -60px;
+      font-size: 26px;
+      opacity: 0;
+      text-shadow: 0 0 10px rgba(0,255,136,0.8);
+      animation: fallDown linear forwards;
+    }
+
+    .scroll-guide {
+      margin-top: 24px;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #7cffb8;
+      opacity: 0.9;
+    }
+
+    .scroll-guide::after {
+      content: "↓";
+      display: block;
+      font-size: 22px;
+      margin-top: 6px;
+      animation: arrowFloat 1.4s ease-in-out infinite;
+    }
+
+    .section {
+      position: relative;
+      z-index: 2;
+      padding: 88px 20px;
+      border-top: 1px solid rgba(0,255,136,0.18);
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.84), rgba(0,0,0,0.96));
+    }
+
+    .section h2 {
+      font-size: clamp(30px, 8vw, 46px);
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      color: #edfff4;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.65),
+        0 0 20px rgba(0,255,136,0.35);
+    }
+
+    .section p {
+      max-width: 760px;
+      margin: 0 auto;
+      line-height: 1.95;
+      font-size: 16px;
+      color: #d9ffe8;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      max-width: 920px;
+      margin: 28px auto 0;
+    }
+
+    .photo-grid img {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid rgba(0,255,136,0.18);
+      background: #111;
+      box-shadow:
+        0 0 14px rgba(0,255,136,0.12),
+        inset 0 0 8px rgba(0,255,136,0.04);
+    }
+
+    .movie-wrap {
+      max-width: 860px;
+      margin: 28px auto 0;
+    }
+
+    .movie-wrap video {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(0,255,136,0.18);
+      background: #000;
+      box-shadow: 0 0 18px rgba(0,255,136,0.12);
+    }
+
+    .end-message {
+      font-size: clamp(28px, 9vw, 52px);
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: #effff5;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.75),
+        0 0 22px rgba(0,255,136,0.42);
+    }
+
+    .spacer { height: 40px; }
+
+    @keyframes heroGlow {
+      from { opacity: 0.9; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(-4px); }
+    }
+
+    @keyframes secBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.32; }
+    }
+
+    @keyframes flashBg {
+      0% { background-color: #000; }
+      40% { background-color: rgba(255,255,255,0.14); }
+      100% { background-color: #000; }
+    }
+
+    @keyframes textPulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    @keyframes fallDown {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      100% {
+        transform: translateY(115vh) rotate(240deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes arrowFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.7; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+
+    @media (max-width: 640px) {
+      .photo-grid { grid-template-columns: 1fr; }
+      .section { padding: 72px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="bgLayer"></div>
+  <div id="bgOverlay"></div>
+
+  <div class="hero-wrap">
+    <div class="hero-screen" id="countdown">
+　　　　<p class="pre-title">⚠️ TEST / 07.08 00:00 ONLY</p>
+      <h1 class="count-title">SARiNA<br>BIRTHDAY</h1>
+      <p id="time"></p>
+      <p class="mystery-line">このページは、その時まで未完成。</p>
+      <p class="count-sub">その時、姿が現れる</p>
+      <div class="day-change-note" id="dayChangeNote"></div>
+    </div>
+
+    <div class="hero-screen" id="unlock" style="display:none;">
+      <h2 class="unlock-title">UNLOCKED</h2>
+      <button onclick="start()">ここをタップ →<br>振って解放</button>
+      <p class="unlock-desc" id="tapGuide">
+        まずここをタップして許可<br>
+        そのあとスマホを振って解放
+      </p>
+      <p class="unlock-tip">0:00以降だけ解放</p>
+    </div>
+
+    <div class="hero-screen" id="effect">
+      <div class="fall-layer" id="fallLayer"></div>
+
+      <div class="stage">
+        <img id="silhouette" src="IMG_3953.jpeg" alt="silhouette">
+        <img id="reveal" src="IMG_2784.jpeg" alt="reveal">
+      </div>
+
+      <div id="birthdayText">
+        HAPPY BIRTHDAY
+        <span class="small">SARiNA 07.08</span>
+      </div>
+
+      <div class="scroll-guide">SCROLL</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2>MESSAGE</h2>
+    <p>
+      07.08<br>
+      この日を一緒に迎えられることが嬉しい。<br>
+      特別な一日になりますように。
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>MEMORIES</h2>
+    <p>ここに思い出の写真を並べていく</p>
+    <div class="photo-grid">
+      <img src="IMG_3953.jpeg" alt="">
+      <img src="IMG_2784.jpeg" alt="">
+      <img src="IMG_3953.jpeg" alt="">
+      <img src="IMG_2784.jpeg" alt="">
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>MAKING</h2>
+    <p>生誕準備の風景や作成動画</p>
+    <div class="movie-wrap">
+      <video controls playsinline preload="metadata">
+        <source src="making.mp4" type="video/mp4">
+      </video>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>GALLERY</h2>
+    <p>あとから写真を増やしたい時用の追加スペース</p>
+    <div class="photo-grid">
+      <img src="IMG_3953.jpeg" alt="">
+      <img src="IMG_2784.jpeg" alt="">
+      <img src="IMG_3953.jpeg" alt="">
+      <img src="IMG_2784.jpeg" alt="">
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="end-message">HAPPY BIRTHDAY</div>
+    <div class="spacer"></div>
+    <p>SARiNA 07.08</p>
+  </section>
+
+  <script>
+    const target = new Date("2026-07-08T00:00:00+09:00");
+    // テスト時だけ使う
+    // const target = new Date("2026-03-25T09:00:00+09:00");
+
+    function daysUntilBirthday(now, target) {
+      const startNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const startTarget = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+      return Math.ceil((startTarget - startNow) / (1000 * 60 * 60 * 24));
+    }
+
+    function setupDailyBackground() {
+      const bgLayer = document.getElementById("bgLayer");
+      const note = document.getElementById("dayChangeNote");
+      const now = new Date();
+      const dayDiff = daysUntilBirthday(now, target);
+
+      if (dayDiff > 30) {
+        bgLayer.style.backgroundImage = 'url("before30.jpg")';
+        note.innerHTML = "30日前から毎日背景写真が切り替わります";
+      } else if (dayDiff >= 1 && dayDiff <= 30) {
+        bgLayer.style.backgroundImage = `url("day${dayDiff}.jpg")`;
+        note.innerHTML = `あと${dayDiff}日<br>背景写真は毎日切り替わります`;
+      } else if (dayDiff <= 0) {
+        bgLayer.style.backgroundImage = 'url("day1.jpg")';
+        note.style.display = "none";
+      }
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        document.getElementById("countdown").style.display = "none";
+        document.getElementById("unlock").style.display = "flex";
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+
+      document.getElementById("time").innerHTML =
+        h + "h " + m + "m <span class='sec'>" + s + "s</span>";
+    }
+
+    setupDailyBackground();
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    let shakeEnabled = false;
+    let lastShake = 0;
+    let effectPlayed = false;
+
+    function start() {
+      if (
+        typeof DeviceMotionEvent !== "undefined" &&
+        typeof DeviceMotionEvent.requestPermission === "function"
+      ) {
+        DeviceMotionEvent.requestPermission().then(response => {
+          if (response === "granted") {
+            shakeEnabled = true;
+            listenShake();
+            document.getElementById("tapGuide").innerHTML =
+              "許可OK<br>スマホを振って解放";
+          }
+        }).catch(console.error);
+      } else {
+        shakeEnabled = true;
+        listenShake();
+        document.getElementById("tapGuide").innerHTML =
+          "スマホを振って解放";
+      }
+    }
+
+    function listenShake() {
+      if (window.__shakeListening) return;
+      window.__shakeListening = true;
+
+      window.addEventListener("devicemotion", function(e) {
+        if (!shakeEnabled || effectPlayed) return;
+        const acc = e.accelerationIncludingGravity;
+        if (!acc) return;
+
+        const total =
+          Math.abs(acc.x || 0) +
+          Math.abs(acc.y || 0) +
+          Math.abs(acc.z || 0);
+
+        if (total > 25 && Date.now() - lastShake > 1200) {
+          lastShake = Date.now();
+          triggerEffect();
+        }
+      });
+    }
+
+    function triggerEffect() {
+      if (effectPlayed) return;
+      effectPlayed = true;
+
+      const unlock = document.getElementById("unlock");
+      const effect = document.getElementById("effect");
+      const sil = document.getElementById("silhouette");
+      const rev = document.getElementById("reveal");
+      const text = document.getElementById("birthdayText");
+
+      unlock.style.display = "none";
+      effect.style.display = "flex";
+      document.body.classList.add("flash");
+
+      sil.style.transition = "opacity 2.4s ease, transform 2.4s ease";
+      rev.style.transition = "opacity 3s ease";
+      text.style.transition = "opacity 1.2s ease, transform 1.2s ease";
+
+      sil.style.opacity = "1";
+      sil.style.transform = "scale(1.00)";
+
+      setTimeout(() => {
+        rev.style.opacity = "1";
+      }, 1500);
+
+      setTimeout(() => {
+        sil.style.opacity = "0.22";
+      }, 2700);
+
+      setTimeout(() => {
+        text.style.display = "block";
+        requestAnimationFrame(() => {
+          text.style.opacity = "1";
+          text.style.transform = "translateY(0)";
+        });
+        startFallingIcons();
+      }, 3000);
+    }
+
+    function startFallingIcons() {
+      const layer = document.getElementById("fallLayer");
+      const icons = ["✦", "✧", "★", "✦", "✧", "★", "✦"];
+
+      for (let i = 0; i < 18; i++) {
+        const item = document.createElement("div");
+        item.className = "fall-item";
+        item.textContent = icons[i % icons.length];
+        item.style.left = Math.random() * 100 + "vw";
+        item.style.animationDuration = (3 + Math.random() * 2.4) + "s";
+        item.style.animationDelay = (Math.random() * 1.8) + "s";
+        layer.appendChild(item);
+      }
+    }
+  </script>
+</body>
+</html>
