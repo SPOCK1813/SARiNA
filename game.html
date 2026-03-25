@@ -112,28 +112,54 @@
     }
 
     .sword {
-      position: absolute;
-      left: 130px;
-      bottom: 112px;
-      width: 120px;
-      height: 16px;
-      background: linear-gradient(90deg, rgba(180,255,220,0.2), #00ff88 40%, #d9fff0 75%, rgba(255,255,255,0.9));
-      border-radius: 999px;
-      box-shadow:
-        0 0 12px rgba(0,255,136,0.9),
-        0 0 26px rgba(0,255,136,0.55),
-        0 0 42px rgba(0,255,136,0.25);
-      transform-origin: left center;
-      transform: scaleX(0) skewX(-18deg);
-      opacity: 0;
-      z-index: 25;
-      pointer-events: none;
-    }
+  position: absolute;
+  left: 110px;
+  bottom: 130px;
 
-    .sword.active {
-      animation: slash 0.22s ease-out forwards;
-    }
+  width: 16px;
+  height: 120px;
 
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.9),
+    #d9fff0 20%,
+    #00ff88 60%,
+    rgba(0,255,136,0.2)
+  );
+
+  border-radius: 999px;
+
+  box-shadow:
+    0 0 12px rgba(0,255,136,0.9),
+    0 0 26px rgba(0,255,136,0.55),
+    0 0 42px rgba(0,255,136,0.25);
+
+  transform-origin: center top;
+  transform: rotate(-120deg) scaleY(0);
+
+  opacity: 0;
+  z-index: 25;
+  pointer-events: none;
+    }
+    
+   .sword.active {
+  animation: slashDown 0.25s ease-out forwards;
+   }
+　　　@keyframes slashDown {
+  0% {
+    opacity: 0;
+    transform: rotate(-120deg) scaleY(0.2);
+  }
+  30% {
+    opacity: 1;
+    transform: rotate(-20deg) scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(20deg) scaleY(1.1);
+  }
+   }
+    
     .enemy {
       position: absolute;
       right: -74px;
