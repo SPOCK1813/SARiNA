@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SARiNA GAME</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      background: #000;
+      color: #00ff88;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    .game-wrap {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(0,255,136,0.08) 0%, rgba(0,0,0,0) 45%),
+        linear-gradient(to bottom, #050505 0%, #000 100%);
+    }
+
+    .hud {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      width: 100%;
+      z-index: 20;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .hud-title {
+      font-size: 14px;
+      letter-spacing: 3px;
+      color: #92ffca;
+      margin-bottom: 8px;
+    }
+
+    .hud-time {
+      font-size: 30px;
+      font-weight: 900;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.9),
+        0 0 18px rgba(0,255,136,0.55);
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .ground {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 200%;
+      height: 90px;
+      background:
+        linear-gradient(to top, rgba(0,255,136,0.12), rgba(0,255,136,0.02)),
+        repeating-linear-gradient(
+          to right,
+          rgba(0,255,136,0.14) 0px,
+          rgba(0,255,136,0.14) 18px,
+          rgba(0,0,0,0) 18px,
+          rgba(0,0,0,0) 36px
+        );
+      border-top: 2px solid rgba(0,255,136,0.4);
+      animation: groundMove 0.7s linear infinite;
+    }
+
+    .player {
+      position: absolute;
+      left: 72px;
+      bottom: 90px;
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      font-size: 38px;
+      border: 2px solid rgba(0,255,136,0.34);
+      background: rgba(0,255,136,0.06);
+      box-shadow:
+        0 0 14px rgba(0,255,136,0.16),
+        inset 0 0 10px rgba(0,255,136,0.08);
+      border-radius: 12px;
+      z-index: 10;
+    }
+
+    .player.jump {
+      filter: drop-shadow(0 0 12px rgba(0,255,136,0.7));
+    }
+
+    .obstacle {
+      position: absolute;
+      bottom: 90px;
+      width: 38px;
+      height: 70px;
+      right: -60px;
+      background:
+        linear-gradient(to top, rgba(0,255,136,0.2), rgba(0,255,136,0.06));
+      border: 2px solid rgba(0,255,136,0.55);
+      box-shadow: 0 0 14px rgba(0,255,136,0.22);
+      border-radius: 8px;
+    }
+
+    .start-screen,
+    .message-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0,0,0,0.52);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      text-align: center;
+    }
+
+    .panel {
+      width: min(88vw, 420px);
+      padding: 26px 22px;
+      border: 1px solid rgba(0,255,136,0.22);
+      border-radius: 18px;
+      background: rgba(0,0,0,0.55);
+      box-shadow:
+        0 0 20px rgba(0,255,136,0.1),
+        inset 0 0 14px rgba(0,255,136,0.04);
+    }
+
+    .panel h1 {
+      margin: 0 0 14px;
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: 3px;
+      color: #eefff6;
+      text-shadow:
+        0 0 8px rgba(0,255,136,0.95),
+        0 0 20px rgba(0,255,136,0.6);
+    }
+
+    .panel p {
+      margin: 0;
+      line-height: 1.9;
+      color: #d5ffe8;
+      font-size: 15px;
+    }
+
+    .tap-note {
+      margin-top: 18px;
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #86ffc0;
+      animation: tapBlink 1.2s ease-in-out infinite;
+    }
+
+    .flash {
+      animation: flashBg 0.35s ease-out;
+    }
+
+    @keyframes groundMove {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-36px); }
+    }
+
+    @keyframes tapBlink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @keyframes flashBg {
+      0% { background-color: transparent; }
+      40% { background-color: rgba(255,255,255,0.12); }
+      100% { background-color: transparent; }
+    }
+    .player-img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-wrap" id="gameWrap">
+    <div class="hud">
+      <div class="hud-title">SARiNA PIXEL GAME</div>
+      <div class="hud-time" id="timer">10.0</div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="ground"></div>
+      <div class="player" id="player"><img src="sarina-pixel.png" class="player-img">
+      </div>
+    </div>
+
+    <div class="start-screen" id="startScreen">
+      <div class="panel">
+        <h1>START</h1>
+        <p>
+          ピクセルSARiNAをジャンプで守れ。<br>
+          障害物を避けて、10秒耐えたらクリア。
+        </p>
+        <div class="tap-note">TAP TO START</div>
+      </div>
+    </div>
+
+    <div class="message-screen" id="messageScreen" style="display:none;">
+      <div class="panel">
+        <h1 id="messageTitle">CLEAR</h1>
+        <p id="messageText">ページを移動中...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const gameWrap = document.getElementById("gameWrap");
+    const stage = document.getElementById("stage");
+    const player = document.getElementById("player");
+    const timerEl = document.getElementById("timer");
+    const startScreen = document.getElementById("startScreen");
+    const messageScreen = document.getElementById("messageScreen");
+    const messageTitle = document.getElementById("messageTitle");
+    const messageText = document.getElementById("messageText");
+
+    const GROUND_Y = 90;
+    const PLAYER_SIZE = 72;
+    const PLAYER_LEFT = 72;
+    const JUMP_HEIGHT = 150;
+    const GRAVITY = 0.8;
+    const JUMP_POWER = 14;
+    const GAME_DURATION = 10; // 秒
+
+    let isRunning = false;
+    let isGameOver = false;
+    let playerY = 0;
+    let velocityY = 0;
+    let obstacles = [];
+    let spawnInterval = null;
+    let animationFrameId = null;
+    let startTime = 0;
+
+    function startGame() {
+      if (isRunning) return;
+      isRunning = true;
+      isGameOver = false;
+      startScreen.style.display = "none";
+      messageScreen.style.display = "none";
+      startTime = performance.now();
+      obstacles = [];
+      clearStageObstacles();
+      playerY = 0;
+      velocityY = 0;
+      updatePlayerPosition();
+
+      spawnInterval = setInterval(spawnObstacle, 1400);
+      gameLoop();
+    }
+
+    function clearStageObstacles() {
+      document.querySelectorAll(".obstacle").forEach(el => el.remove());
+    }
+
+    function spawnObstacle() {
+      if (!isRunning || isGameOver) return;
+
+      const obstacle = document.createElement("div");
+      obstacle.className = "obstacle";
+      stage.appendChild(obstacle);
+
+      obstacles.push({
+        el: obstacle,
+        x: window.innerWidth + 20,
+        width: 38,
+        height: 70,
+        speed: 6 + Math.random() * 1.2
+      });
+    }
+
+    function jump() {
+      if (!isRunning || isGameOver) return;
+      if (playerY > 2) return; // 二段ジャンプ防止
+
+      velocityY = JUMP_POWER;
+      player.classList.add("jump");
+      setTimeout(() => player.classList.remove("jump"), 260);
+    }
+
+    function updatePlayerPosition() {
+      player.style.bottom = (GROUND_Y + playerY) + "px";
+    }
+
+    function gameLoop(timestamp) {
+      if (!isRunning || isGameOver) return;
+
+      const elapsed = (timestamp - startTime) / 1000;
+      const remain = Math.max(0, GAME_DURATION - elapsed);
+      timerEl.textContent = remain.toFixed(1);
+
+      // クリア判定
+      if (remain <= 0) {
+        clearResult();
+        return;
+      }
+
+      // ジャンプ物理
+      velocityY -= GRAVITY;
+      playerY += velocityY;
+
+      if (playerY < 0) {
+        playerY = 0;
+        velocityY = 0;
+      }
+      if (playerY > JUMP_HEIGHT) {
+        playerY = JUMP_HEIGHT;
+      }
+
+      updatePlayerPosition();
+
+      // 障害物更新
+      obstacles.forEach(ob => {
+        ob.x -= ob.speed;
+        ob.el.style.left = ob.x + "px";
+      });
+
+      // 画面外削除
+      obstacles = obstacles.filter(ob => {
+        if (ob.x < -80) {
+          ob.el.remove();
+          return false;
+        }
+        return true;
+      });
+
+      // 当たり判定
+      const playerRect = {
+        left: PLAYER_LEFT,
+        right: PLAYER_LEFT + PLAYER_SIZE,
+        bottom: GROUND_Y + playerY,
+        top: GROUND_Y + playerY + PLAYER_SIZE
+      };
+
+      for (const ob of obstacles) {
+        const obRect = {
+          left: ob.x,
+          right: ob.x + ob.width,
+          bottom: GROUND_Y,
+          top: GROUND_Y + ob.height
+        };
+
+        if (
+          playerRect.right > obRect.left &&
+          playerRect.left < obRect.right &&
+          playerRect.bottom < obRect.top &&
+          playerRect.top > obRect.bottom
+        ) {
+          failResult();
+          return;
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    function clearResult() {
+      isGameOver = true;
+      isRunning = false;
+      clearInterval(spawnInterval);
+      cancelAnimationFrame(animationFrameId);
+      gameWrap.classList.add("flash");
+
+      messageScreen.style.display = "flex";
+      messageTitle.textContent = "CLEAR";
+      messageText.textContent = "クリア！ ご褒美ページへ移動します…";
+
+      setTimeout(() => {
+        window.location.href = "happy.html";
+      }, 1200);
+    }
+
+    function failResult() {
+      isGameOver = true;
+      isRunning = false;
+      clearInterval(spawnInterval);
+      cancelAnimationFrame(animationFrameId);
+      gameWrap.classList.add("flash");
+
+      messageScreen.style.display = "flex";
+      messageTitle.textContent = "GAME OVER";
+      messageText.textContent = "もう一回挑戦しよう…";
+
+      setTimeout(() => {
+        window.location.href = "retry.html";
+      }, 1200);
+    }
+
+    document.addEventListener("click", () => {
+      if (!isRunning && !isGameOver) {
+        startGame();
+        return;
+      }
+      jump();
+    });
+
+    document.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (!isRunning && !isGameOver) {
+        startGame();
+        return;
+      }
+      jump();
+    }, { passive: false });
+  </script>
+</body>
+</html>
