@@ -365,6 +365,11 @@
     let killCount = 0;
     let attacking = false;
     let gameEnded = false;
+    let canAttack = false;
+    
+    setTimeout(() => {
+  canAttack = true;
+    }, 600);
 
     let enemyX = window.innerWidth + 80;
     let enemySpeed = 6.5;
@@ -392,38 +397,50 @@
     }
 
     function attack() {
-      if (attacking || gameEnded) return;
-      attacking = true;
+  if (!canAttack || attacking || gameEnded) return;
 
-      player.classList.add("attack");
-      sword.classList.remove("active");
-      void sword.offsetWidth;
-      sword.classList.add("active");
+  attacking = true;
 
-      if (navigator.vibrate) navigator.vibrate(18);
+  player.classList.add("attack");
 
-      const slashLeft = 130;
-      const slashRight = slashLeft + 120;
-      const enemyLeft = enemyX - 48;
-      const enemyRight = enemyX;
+  sword.classList.remove("active");
+  void sword.offsetWidth;
+  sword.classList.add("active");
 
-      const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
+  if (navigator.vibrate) navigator.vibrate(18);
 
-      if (inRange) {
-        killCount += 1;
-        score.textContent = killCount;
-        enemy.classList.add("hit");
-        flash.classList.remove("active");
-        slashText.classList.remove("show");
-        void flash.offsetWidth;
-        void slashText.offsetWidth;
-        flash.classList.add("active");
-        slashText.classList.add("show");
+  const slashLeft = 130;
+  const slashRight = slashLeft + 120;
+  const enemyLeft = enemyX - 48;
+  const enemyRight = enemyX;
 
-        setTimeout(() => {
-          resetEnemy();
-        }, 180);
-      }
+  const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
+
+  if (inRange) {
+    killCount += 1;
+    score.textContent = killCount;
+
+    enemy.classList.add("hit");
+
+    flash.classList.remove("active");
+    slashText.classList.remove("show");
+
+    void flash.offsetWidth;
+    void slashText.offsetWidth;
+
+    flash.classList.add("active");
+    slashText.classList.add("show");
+
+    setTimeout(() => {
+      resetEnemy();
+    }, 180);
+  }
+
+  setTimeout(() => {
+    player.classList.remove("attack");
+    attacking = false;
+  }, 220);
+    }
 
       setTimeout(() => {
         player.classList.remove("attack");
