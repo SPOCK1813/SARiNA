@@ -1,202 +1,154 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SARiNA PIXEL GAME</title>
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SARiNA GAME</title>
 
-    body {
-      margin: 0;
-      background: #000;
-      color: #8fffc1;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      overflow: hidden;
-    }
+<style>
+body{
+  margin:0;
+  background:#000;
+  overflow:hidden;
+  font-family:sans-serif;
+}
 
-    .game {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at center 68%, rgba(0,255,136,0.12) 0%, rgba(0,0,0,0) 28%),
-        linear-gradient(to bottom, #000 0%, #000 100%);
-    }
+.game{
+  position:relative;
+  width:100vw;
+  height:100vh;
+}
 
-    .title {
-      position: absolute;
-      top: 56px;
-      width: 100%;
-      text-align: center;
-      letter-spacing: 6px;
-      font-size: 18px;
-      color: #baffdc;
-      text-shadow: 0 0 10px rgba(0,255,136,0.25);
-      z-index: 20;
-    }
+.player{
+  position:absolute;
+  left:80px;
+  bottom:100px;
+  width:80px;
+  z-index:10;
+}
 
-    .score {
-      position: absolute;
-      top: 100px;
-      width: 100%;
-      text-align: center;
-      font-size: 64px;
-      font-weight: 900;
-      color: #66ff9d;
-      text-shadow:
-        0 0 10px rgba(0,255,136,0.95),
-        0 0 22px rgba(0,255,136,0.7),
-        0 0 40px rgba(0,255,136,0.35);
-      z-index: 20;
-    }
+.player img{
+  width:100%;
+  display:block;
+}
 
-    .ground {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 68px;
-      height: 18px;
-      border-top: 2px solid rgba(0,255,136,0.85);
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(0,255,136,0.18) 0 16px,
-          rgba(0,0,0,0) 16px 32px
-        );
-      box-shadow:
-        0 0 12px rgba(0,255,136,0.18),
-        0 0 24px rgba(0,255,136,0.10);
-      animation: groundMove 0.7s linear infinite;
-      z-index: 5;
-    }
+.obstacle{
+  position:absolute;
+  right:-60px;
+  bottom:100px;
+  width:60px;
+  height:auto;
+  object-fit:contain;
+  animation:move 2s linear infinite;
+}
 
-    .player-lane {
-      position: absolute;
-      left: 70px;
-      bottom: 68px;
-      width: 84px;
-      height: 96px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 15;
-      pointer-events: none;
-    }
+.ground{
+  position:absolute;
+  bottom:80px;
+  width:100%;
+  height:2px;
+  background:#00ff88;
+}
 
-    .player {
-      width: 72px;
-      height: 72px;
-      display: block;
-      object-fit: contain;
-      image-rendering: pixelated;
-      filter:
-        drop-shadow(0 0 10px rgba(0,255,136,0.14))
-        drop-shadow(0 0 22px rgba(0,255,136,0.10));
-      transform: translateY(0);
-    }
+.score{
+  position:absolute;
+  top:40px;
+  width:100%;
+  text-align:center;
+  font-size:48px;
+  color:#00ff88;
+  z-index:20;
+}
 
-    .player.jump {
-      animation: jump 0.72s cubic-bezier(.2,.8,.2,1);
-      filter:
-        drop-shadow(0 0 10px rgba(0,255,136,0.24))
-        drop-shadow(0 0 28px rgba(0,255,136,0.16));
-    }
+@keyframes move{
+  from{ right:-60px; }
+  to{ right:100vw; }
+}
 
-    .obstacle {
-      position: absolute;
-      right: -80px;
-      bottom: 86px;
-      width: 44px;
-      height: 86px;
-      border: 2px solid rgba(0,255,136,0.75);
-      border-radius: 14px;
-      background: linear-gradient(to bottom, rgba(0,255,136,0.08), rgba(0,255,136,0.18));
-      box-shadow:
-        0 0 16px rgba(0,255,136,0.16),
-        inset 0 0 14px rgba(0,255,136,0.08);
-      z-index: 10;
-      animation: obstacleMove 2.2s linear infinite;
-    }
+.jump{
+  animation:jump 0.6s ease;
+}
 
-    .hint {
-      position: absolute;
-      bottom: 140px;
-      width: 100%;
-      text-align: center;
-      font-size: 13px;
-      letter-spacing: 2px;
-      color: rgba(186,255,220,0.82);
-      z-index: 20;
-    }
-
-    @keyframes groundMove {
-      from { background-position-x: 0; }
-      to   { background-position-x: -32px; }
-    }
-
-    @keyframes obstacleMove {
-      from { right: -80px; }
-      to   { right: calc(100vw + 80px); }
-    }
-
-    @keyframes jump {
-      0%   { transform: translateY(0); }
-      20%  { transform: translateY(-32px); }
-      50%  { transform: translateY(-118px); }
-      80%  { transform: translateY(-32px); }
-      100% { transform: translateY(0); }
-    }
-  </style>
+@keyframes jump{
+  0%{ transform:translateY(0); }
+  50%{ transform:translateY(-150px); }
+  100%{ transform:translateY(0); }
+}
+</style>
 </head>
+
 <body>
-  <div class="game">
-    <div class="title">SARiNA PIXEL GAME</div>
-    <div class="score" id="score">9.3</div>
 
-    <div class="hint">TAP TO JUMP</div>
+<div class="game">
 
-    <div class="player-lane">
-      <img
-        src="sarina-pixel.png"
-        alt="player"
-        class="player"
-        id="player"
-      />
-    </div>
+  <div class="score" id="score">10</div>
 
-    <div class="obstacle" id="obstacle"></div>
-    <div class="ground"></div>
+  <div class="player" id="player">
+    <img src="sarina-pixel.png" alt="player">
   </div>
 
-  <script>
-    const player = document.getElementById("player");
-    const score = document.getElementById("score");
+  <img src="obstacle.png" class="obstacle" id="obstacle">
 
-    let jumping = false;
-    let scoreValue = 9.3;
+  <div class="ground"></div>
 
-    function doJump() {
-      if (jumping) return;
-      jumping = true;
-      player.classList.add("jump");
+</div>
 
-      if (navigator.vibrate) navigator.vibrate(20);
+<script>
+const player = document.getElementById("player");
+const obstacle = document.getElementById("obstacle");
+const score = document.getElementById("score");
 
-      setTimeout(() => {
-        player.classList.remove("jump");
-        jumping = false;
-      }, 720);
-    }
+let jumping = false;
+let time = 10;
+let gameOver = false;
 
-    window.addEventListener("click", doJump);
-    window.addEventListener("touchstart", doJump, { passive: true });
+function jump(){
+  if(jumping || gameOver) return;
+  jumping = true;
+  player.classList.add("jump");
 
-    setInterval(() => {
-      scoreValue += 0.1;
-      score.textContent = scoreValue.toFixed(1);
-    }, 1200);
-  </script>
+  setTimeout(()=>{
+    player.classList.remove("jump");
+    jumping = false;
+  },600);
+}
+
+window.addEventListener("click", jump);
+window.addEventListener("touchstart", jump, { passive:true });
+
+const timer = setInterval(()=>{
+  if(gameOver) return;
+
+  time--;
+  score.textContent = time;
+
+  if(time <= 0){
+    gameOver = true;
+    score.textContent = "CLEAR";
+    obstacle.style.animation = "none";
+  }
+},1000);
+
+function checkHit(){
+  if(gameOver) return;
+
+  const playerRect = player.getBoundingClientRect();
+  const obstacleRect = obstacle.getBoundingClientRect();
+
+  if(
+    playerRect.right > obstacleRect.left &&
+    playerRect.left < obstacleRect.right &&
+    playerRect.bottom > obstacleRect.top &&
+    playerRect.top < obstacleRect.bottom
+  ){
+    gameOver = true;
+    score.textContent = "GAME OVER";
+    obstacle.style.animation = "none";
+  }
+}
+
+setInterval(checkHit, 10);
+</script>
+
 </body>
 </html>
