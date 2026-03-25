@@ -113,50 +113,44 @@
 
     .sword {
   position: absolute;
-  left: 110px;
-  bottom: 130px;
-
-  width: 16px;
-  height: 120px;
-
+  left: 92px;
+  bottom: 118px;
+  width: 26px;
+  height: 140px;
   background: linear-gradient(
     to bottom,
-    rgba(255,255,255,0.9),
-    #d9fff0 20%,
-    #00ff88 60%,
-    rgba(0,255,136,0.2)
+    rgba(255,255,255,0.95),
+    #d9fff0 18%,
+    #00ff88 58%,
+    rgba(0,255,136,0.25)
   );
-
   border-radius: 999px;
-
   box-shadow:
-    0 0 12px rgba(0,255,136,0.9),
-    0 0 26px rgba(0,255,136,0.55),
-    0 0 42px rgba(0,255,136,0.25);
-
+    0 0 12px rgba(0,255,136,0.95),
+    0 0 28px rgba(0,255,136,0.65),
+    0 0 48px rgba(0,255,136,0.28);
   transform-origin: center top;
-  transform: rotate(-120deg) scaleY(0);
-
+  transform: rotate(-95deg) scaleY(0.15);
   opacity: 0;
   z-index: 25;
   pointer-events: none;
     }
     
    .sword.active {
-  animation: slashDown 0.25s ease-out forwards;
+  animation: slashDown 0.28s ease-out forwards;
    }
 　　　@keyframes slashDown {
   0% {
     opacity: 0;
-    transform: rotate(-120deg) scaleY(0.2);
+    transform: rotate(-95deg) scaleY(0.15);
   }
-  30% {
+  25% {
     opacity: 1;
-    transform: rotate(-20deg) scaleY(1);
+    transform: rotate(-35deg) scaleY(1);
   }
   100% {
     opacity: 0;
-    transform: rotate(20deg) scaleY(1.1);
+    transform: rotate(18deg) scaleY(1.05);
   }
    }
     
