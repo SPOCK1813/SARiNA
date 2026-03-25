@@ -17,32 +17,144 @@ body {
 
 #countdown, #unlock, #effect {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 h1 {
   font-size: 24px;
   letter-spacing: 2px;
+  margin: 0 0 16px;
+}
+
+#time {
+  font-size: 20px;
+  margin: 0 0 18px;
+}
+
+.subtext {
+  font-size: 14px;
+  line-height: 1.7;
+  opacity: 0.9;
 }
 
 button {
-  padding: 15px 30px;
+  padding: 16px 28px;
   font-size: 18px;
   background: transparent;
   border: 2px solid #00ff88;
   color: #00ff88;
+  box-shadow: 0 0 18px rgba(0,255,136,0.35);
 }
 
-#effect img {
-  width: 80vw;
+#tapGuide {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #7dffbb;
+  opacity: 0.95;
+}
+
+#effect {
+  display: none;
+}
+
+.stage {
+  position: relative;
+  width: min(86vw, 420px);
+  aspect-ratio: 3 / 4;
+  margin-bottom: 24px;
+}
+
+.stage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   opacity: 0;
-  transition: opacity 1s;
 }
 
-.glow {
-  filter: drop-shadow(0 0 25px #00ff88);
+#silhouette {
+  filter: drop-shadow(0 0 28px #00ff88);
+  transform: scale(1.02);
+}
+
+#birthdayText {
+  display: none;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: 3px;
+  font-weight: 700;
+  color: #00ff88;
+  text-shadow:
+    0 0 8px rgba(0,255,136,0.6),
+    0 0 18px rgba(0,255,136,0.5),
+    0 0 36px rgba(0,255,136,0.35);
+  animation: glowPulse 1.8s ease-in-out infinite;
+}
+
+#birthdayText .small {
+  display: block;
+  font-size: 18px;
+  letter-spacing: 4px;
+  margin-top: 10px;
+}
+
+.fall-layer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.fall-item {
+  position: absolute;
+  top: -60px;
+  font-size: 26px;
+  opacity: 0;
+  animation: fallDown linear forwards;
+  text-shadow: 0 0 10px rgba(0,255,136,0.5);
+}
+
+.flash {
+  animation: flashBg 0.35s ease-out;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@keyframes fallDown {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(115vh) rotate(220deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flashBg {
+  0% { background: #000; }
+  40% { background: rgba(255,255,255,0.15); }
+  100% { background: #000; }
 }
 </style>
 </head>
@@ -50,24 +162,38 @@ button {
 <body>
 
 <div id="countdown">
-  <h1>SARiNA BIRTHDAY COUNTDOWN</h1>
+  <h1>SARiNA BIRTHDAY<br>COUNTDOWN</h1>
   <p id="time"></p>
-  <p>その時、姿が現れる</p>
+  <p class="subtext">その時、姿が現れる</p>
 </div>
 
 <div id="unlock" style="display:none;">
   <h1>UNLOCKED</h1>
-  <button onclick="start()">SHAKE TO UNLOCK</button>
+  <button onclick="start()">TAP TO ENABLE<br>SHAKE</button>
+  <div id="tapGuide">
+    まずここをタップして許可<br>
+    そのあとスマホを振って解放
+  </div>
 </div>
 
-<div id="effect" style="display:none;">
-  <img id="silhouette" src="IMG_3953.jpeg" class="glow">
-  <img id="reveal" src="IMG_2784.jpeg">
-  <h1 id="text" style="display:none;">SARiNA BIRTHDAY 07.08</h1>
+<div id="effect">
+  <div class="fall-layer" id="fallLayer"></div>
+
+  <div class="stage">
+    <img id="silhouette" src="IMG_3953.jpeg" alt="silhouette">
+    <img id="reveal" src="IMG_2784.jpeg" alt="reveal">
+  </div>
+
+  <div id="birthdayText">
+    HAPPY BIRTHDAY
+    <span class="small">SARiNA 07.08</span>
+  </div>
 </div>
 
 <script>
-const target = new Date("2026-03-25T09:06:00+09:00");
+const target = new Date("2026-07-08T00:00:00+09:00");
+// テスト中だけこっちに変える
+// const target = new Date("2026-03-25T09:00:00+09:00");
 
 function updateCountdown() {
   const now = new Date();
@@ -75,7 +201,7 @@ function updateCountdown() {
 
   if (diff <= 0) {
     document.getElementById("countdown").style.display = "none";
-    document.getElementById("unlock").style.display = "block";
+    document.getElementById("unlock").style.display = "flex";
     return;
   }
 
@@ -83,52 +209,107 @@ function updateCountdown() {
   const m = Math.floor(diff / 1000 / 60) % 60;
   const s = Math.floor(diff / 1000) % 60;
 
-  document.getElementById("time").innerText =
-    h + "h " + m + "m " + s + "s";
+  document.getElementById("time").innerText = h + "h " + m + "m " + s + "s";
 }
 
+updateCountdown();
 setInterval(updateCountdown, 1000);
 
+let shakeEnabled = false;
+let lastShake = 0;
+let effectPlayed = false;
+
 function start() {
-  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+  if (typeof DeviceMotionEvent !== "undefined" &&
+      typeof DeviceMotionEvent.requestPermission === "function") {
     DeviceMotionEvent.requestPermission().then(response => {
-      if (response === 'granted') {
+      if (response === "granted") {
+        shakeEnabled = true;
         listenShake();
+        document.getElementById("tapGuide").innerHTML =
+          "許可OK<br>スマホを振って解放";
       }
-    });
+    }).catch(console.error);
   } else {
+    shakeEnabled = true;
     listenShake();
+    document.getElementById("tapGuide").innerHTML =
+      "スマホを振って解放";
   }
 }
 
-let last = 0;
-
 function listenShake() {
-  window.addEventListener("devicemotion", function(e) {
-    const acc = e.accelerationIncludingGravity;
-    const total = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+  if (window.__shakeListening) return;
+  window.__shakeListening = true;
 
-    if (total > 25 && Date.now() - last > 1000) {
-      last = Date.now();
+  window.addEventListener("devicemotion", function(e) {
+    if (!shakeEnabled || effectPlayed) return;
+    const acc = e.accelerationIncludingGravity;
+    if (!acc) return;
+
+    const total = Math.abs(acc.x || 0) + Math.abs(acc.y || 0) + Math.abs(acc.z || 0);
+
+    if (total > 25 && Date.now() - lastShake > 1200) {
+      lastShake = Date.now();
       triggerEffect();
     }
   });
 }
 
 function triggerEffect() {
-  document.getElementById("unlock").style.display = "none";
-  document.getElementById("effect").style.display = "block";
+  if (effectPlayed) return;
+  effectPlayed = true;
 
+  const unlock = document.getElementById("unlock");
+  const effect = document.getElementById("effect");
   const sil = document.getElementById("silhouette");
   const rev = document.getElementById("reveal");
+  const text = document.getElementById("birthdayText");
 
-  sil.style.opacity = 1;
+  unlock.style.display = "none";
+  effect.style.display = "flex";
+  document.body.classList.add("flash");
+
+  sil.style.transition = "opacity 2.2s ease, transform 2.2s ease";
+  rev.style.transition = "opacity 2.8s ease";
+  text.style.transition = "opacity 1.2s ease, transform 1.2s ease";
+  text.style.opacity = "0";
+  text.style.transform = "translateY(16px)";
+
+  sil.style.opacity = "1";
+  sil.style.transform = "scale(1.00)";
 
   setTimeout(() => {
-    sil.style.opacity = 0;
-    rev.style.opacity = 1;
-    document.getElementById("text").style.display = "block";
-  }, 1500);
+    rev.style.opacity = "1";
+  }, 1400);
+
+  setTimeout(() => {
+    sil.style.opacity = "0.28";
+  }, 2400);
+
+  setTimeout(() => {
+    text.style.display = "block";
+    requestAnimationFrame(() => {
+      text.style.opacity = "1";
+      text.style.transform = "translateY(0)";
+    });
+    startFallingIcons();
+  }, 2600);
+}
+
+function startFallingIcons() {
+  const layer = document.getElementById("fallLayer");
+  const icons = ["✦", "✧", "★", "✦", "✧", "★"];
+
+  for (let i = 0; i < 16; i++) {
+    const item = document.createElement("div");
+    item.className = "fall-item";
+    item.textContent = icons[i % icons.length];
+    item.style.left = Math.random() * 100 + "vw";
+    item.style.animationDuration = (3 + Math.random() * 2) + "s";
+    item.style.animationDelay = (Math.random() * 1.6) + "s";
+    layer.appendChild(item);
+  }
 }
 </script>
 
