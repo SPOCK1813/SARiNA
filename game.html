@@ -116,7 +116,7 @@
     .sword {
       position: absolute;
       left: 126px;
-      bottom: 112px;
+      bottom: 132px;
       width: 14px;
       height: 108px;
       background: linear-gradient(
@@ -134,7 +134,7 @@
         0 0 28px rgba(0,255,136,0.72),
         0 0 56px rgba(0,255,136,0.35);
       transform-origin: 50% 100%;
-      transform: rotate(-110deg) scale(0.3);
+      transform: rotate(-135deg) scale(0.3);
       opacity: 0;
       z-index: 40;
       pointer-events: none;
@@ -363,15 +363,15 @@
 
     function showSword() {
   sword.style.opacity = "1";
-  sword.style.transform = "rotate(-55deg) scale(0.95)";
+  sword.style.transform = "rotate(-60deg) scale(1)";
 
   setTimeout(() => {
     sword.style.opacity = "0";
-    sword.style.transform = "rotate(18deg) scale(1)";
+    sword.style.transform = "rotate(25deg) scale(1)";
   }, 110);
 
   setTimeout(() => {
-    sword.style.transform = "rotate(-110deg) scale(0.3)";
+    sword.style.transform = "rotate(-135deg) scale(0.3)";
   }, 220);
     }
 
