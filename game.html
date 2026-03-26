@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SARiNA SWORD GAME</title>
+  <title>SARiNA GREEN SWORD</title>
   <style>
     * { box-sizing: border-box; }
 
@@ -108,52 +108,51 @@
     }
 
     .player.attack {
-      animation: playerPulse 0.18s ease-out;
+      animation: playerPulse 0.22s ease-out;
     }
 
     .sword {
       position: absolute;
-      left: 112px;
-      bottom: 116px;
-      width: 12px;
-      height: 110px;
+      left: 106px;
+      bottom: 104px;
+      width: 24px;
+      height: 132px;
       background: linear-gradient(
         to bottom,
-        rgba(255,255,255,0.98) 0%,
-        #f3fff8 10%,
-        #9dffd0 28%,
-        #00ff88 68%,
-        rgba(0,255,136,0.20) 100%
+        rgba(255,255,255,1) 0%,
+        #eafff5 14%,
+        #a4ffd3 36%,
+        #00ff88 72%,
+        rgba(0,255,136,0.22) 100%
       );
       border-radius: 999px;
       box-shadow:
-        0 0 8px rgba(0,255,136,0.95),
-        0 0 18px rgba(0,255,136,0.65),
-        0 0 32px rgba(0,255,136,0.25);
-      opacity: 0;
-      z-index: 999;
-      pointer-events: none;
+        0 0 12px rgba(0,255,136,1),
+        0 0 24px rgba(0,255,136,0.7),
+        0 0 42px rgba(0,255,136,0.35);
       transform-origin: 50% 100%;
-      transform: rotate(-55deg) scaleY(0.15);
+      transform: rotate(-58deg) scale(0.25);
+      opacity: 0;
+      z-index: 40;
+      pointer-events: none;
     }
 
     .sword::after {
       content: "";
       position: absolute;
       left: 50%;
-      bottom: -8px;
+      bottom: -10px;
       transform: translateX(-50%);
-      width: 28px;
-      height: 8px;
+      width: 34px;
+      height: 10px;
       border-radius: 999px;
-      background: rgba(160,255,210,0.92);
+      background: rgba(180,255,220,0.95);
       box-shadow:
-        0 0 8px rgba(0,255,136,0.8),
-        0 0 16px rgba(0,255,136,0.35);
+        0 0 8px rgba(0,255,136,0.9),
+        0 0 16px rgba(0,255,136,0.4);
     }
 
     .sword.active {
-      opacity: 1;
       animation: slashDown 0.28s ease-out forwards;
     }
 
@@ -182,7 +181,7 @@
       background: rgba(255,255,255,0.10);
       opacity: 0;
       pointer-events: none;
-      z-index: 40;
+      z-index: 35;
     }
 
     .flash.active {
@@ -258,22 +257,22 @@
 
     @keyframes playerPulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.06); }
+      50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
 
     @keyframes slashDown {
       0% {
         opacity: 0;
-        transform: rotate(-55deg) scaleY(0.15);
+        transform: rotate(-58deg) scale(0.25);
       }
-      22% {
+      18% {
         opacity: 1;
-        transform: rotate(-18deg) scaleY(1);
+        transform: rotate(-28deg) scale(1);
       }
       100% {
         opacity: 0;
-        transform: rotate(38deg) scaleY(1.02);
+        transform: rotate(30deg) scale(1);
       }
     }
 
