@@ -116,7 +116,7 @@
     .sword {
       position: absolute;
       left: 156px;
-      bottom: 154px;
+      bottom: 150px;
       width: 12px;
       height: 104px;
       background: linear-gradient(
@@ -139,20 +139,20 @@
       pointer-events: none;
     }
 
-    .sword::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -12px;
-      transform: translateX(-50%);
-      width: 42px;
-      height: 12px;
-      border-radius: 999px;
-      background: #d7ffe9;
-      box-shadow:
-        0 0 8px rgba(0,255,136,0.9),
-        0 0 18px rgba(0,255,136,0.45);
-    }
+  .sword::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  transform: translateX(-50%);
+  width: 54px;
+  height: 10px;
+  border-radius: 999px;
+  background: #d7ffe9;
+  box-shadow:
+    0 0 8px rgba(0,255,136,0.9),
+    0 0 18px rgba(0,255,136,0.45);
+  }
 
     .enemy {
       position: absolute;
@@ -392,12 +392,15 @@
 
       if (navigator.vibrate) navigator.vibrate(18);
 
-      const slashLeft = 110;
-      const slashRight = 200;
-      const enemyLeft = enemyX;
-      const enemyRight = enemyX + 48;
+      const swordBaseX = 156;   // 持ち手あたり
+const swordTipX  = 240;   // 剣先の届く位置
+const slashLeft = swordBaseX;
+const slashRight = swordTipX;
 
-      const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
+const enemyLeft = enemyX;
+const enemyRight = enemyX + 48;
+
+const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
 
       if (inRange) {
   killCount += 1;
