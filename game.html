@@ -112,49 +112,69 @@
     }
 
     .sword {
-      position: absolute;
-      left: 106px;
-      bottom: 104px;
-      width: 24px;
-      height: 132px;
-      background: linear-gradient(
-        to bottom,
-        rgba(255,255,255,1) 0%,
-        #eafff5 14%,
-        #a4ffd3 36%,
-        #00ff88 72%,
-        rgba(0,255,136,0.22) 100%
-      );
-      border-radius: 999px;
-      box-shadow:
-        0 0 12px rgba(0,255,136,1),
-        0 0 24px rgba(0,255,136,0.7),
-        0 0 42px rgba(0,255,136,0.35);
-      transform-origin: 50% 100%;
-      transform: rotate(-58deg) scale(0.25);
-      opacity: 0;
-      z-index: 40;
-      pointer-events: none;
-    }
+  position: absolute;
+  left: 98px;
+  bottom: 96px;
+  width: 36px;
+  height: 150px;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #eafff5 18%,
+    #9fffd2 42%,
+    #00ff88 78%,
+    rgba(0,255,136,0.28) 100%
+  );
+  border: 2px solid rgba(255,255,255,0.75);
+  border-radius: 999px;
+  box-shadow:
+    0 0 14px rgba(0,255,136,1),
+    0 0 28px rgba(0,255,136,0.72),
+    0 0 56px rgba(0,255,136,0.35);
+  transform-origin: 50% 100%;
+  transform: rotate(-70deg) scale(0.35);
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
 
-    .sword::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -10px;
-      transform: translateX(-50%);
-      width: 34px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(180,255,220,0.95);
-      box-shadow:
-        0 0 8px rgba(0,255,136,0.9),
-        0 0 16px rgba(0,255,136,0.4);
-    }
+.sword::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 12px;
+  border-radius: 999px;
+  background: #caffdf;
+  box-shadow:
+    0 0 8px rgba(0,255,136,0.9),
+    0 0 18px rgba(0,255,136,0.45);
+}
 
-    .sword.active {
-      animation: slashDown 0.28s ease-out forwards;
-    }
+.sword.active {
+  animation: slashDown 0.45s ease-out forwards;
+}
+
+@keyframes slashDown {
+  0% {
+    opacity: 0;
+    transform: rotate(-70deg) scale(0.35);
+  }
+  12% {
+    opacity: 1;
+    transform: rotate(-48deg) scale(0.9);
+  }
+  45% {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(36deg) scale(1);
+  }
+}
 
     .enemy {
       position: absolute;
@@ -416,7 +436,7 @@
       setTimeout(() => {
         player.classList.remove("attack");
         attacking = false;
-      }, 220);
+      }, 360);
     }
 
     function checkCollision() {
