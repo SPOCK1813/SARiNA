@@ -115,10 +115,10 @@
 
     .sword {
       position: absolute;
-      left: 138px;
-      bottom: 138px;
-      width: 14px;
-      height: 108px;
+      left: 156px;
+      bottom: 154px;
+      width: 12px;
+      height: 104px;
       background: linear-gradient(
         to bottom,
         #ffffff 0%,
@@ -363,23 +363,23 @@
     function showSword() {
   sword.style.opacity = "1";
 
-  // 構え（上）
-  sword.style.transform = "rotate(-145deg) scale(0.3)";
+  // 頭の上で構える
+  sword.style.transform = "rotate(-170deg) scale(0.3)";
 
   setTimeout(() => {
     // 振り下ろし
-    sword.style.transform = "rotate(-40deg) scale(1)";
+    sword.style.transform = "rotate(-78deg) scale(1)";
   }, 10);
 
   setTimeout(() => {
     // 斬り抜け
-    sword.style.transform = "rotate(25deg) scale(1)";
+    sword.style.transform = "rotate(8deg) scale(1)";
   }, 120);
 
   setTimeout(() => {
     // リセット
     sword.style.opacity = "0";
-    sword.style.transform = "rotate(-145deg) scale(0.3)";
+    sword.style.transform = "rotate(-170deg) scale(0.3)";
   }, 240);
     }
 
