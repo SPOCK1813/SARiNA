@@ -112,66 +112,51 @@
     }
 
     .sword {
-  position: absolute;
-  left: 112px;
-  bottom: 116px;
-  width: 12px;
-  height: 110px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.98) 0%,
-    #f3fff8 10%,
-    #9dffd0 28%,
-    #00ff88 68%,
-    rgba(0,255,136,0.20) 100%
-  );
-  border-radius: 999px;
-  box-shadow:
-    0 0 8px rgba(0,255,136,0.95),
-    0 0 18px rgba(0,255,136,0.65),
-    0 0 32px rgba(0,255,136,0.25);
-  opacity: 0;
-  z-index: 999;
-  pointer-events: none;
-  transform-origin: 50% 100%;
-  transform: rotate(-55deg) scaleY(0.15);
-}
+      position: absolute;
+      left: 112px;
+      bottom: 116px;
+      width: 12px;
+      height: 110px;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.98) 0%,
+        #f3fff8 10%,
+        #9dffd0 28%,
+        #00ff88 68%,
+        rgba(0,255,136,0.20) 100%
+      );
+      border-radius: 999px;
+      box-shadow:
+        0 0 8px rgba(0,255,136,0.95),
+        0 0 18px rgba(0,255,136,0.65),
+        0 0 32px rgba(0,255,136,0.25);
+      opacity: 0;
+      z-index: 999;
+      pointer-events: none;
+      transform-origin: 50% 100%;
+      transform: rotate(-55deg) scaleY(0.15);
+    }
 
-.sword::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -8px;
-  transform: translateX(-50%);
-  width: 28px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(160,255,210,0.92);
-  box-shadow:
-    0 0 8px rgba(0,255,136,0.8),
-    0 0 16px rgba(0,255,136,0.35);
-}
+    .sword::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(160,255,210,0.92);
+      box-shadow:
+        0 0 8px rgba(0,255,136,0.8),
+        0 0 16px rgba(0,255,136,0.35);
+    }
 
-.sword.active {
-  opacity: 1;
-  animation: slashDown 0.28s ease-out forwards;
-}
+    .sword.active {
+      opacity: 1;
+      animation: slashDown 0.28s ease-out forwards;
+    }
 
-@keyframes slashDown {
-  0% {
-    opacity: 0;
-    transform: rotate(-55deg) scaleY(0.15);
-  }
-  22% {
-    opacity: 1;
-    transform: rotate(-18deg) scaleY(1);
-  }
-  100% {
-    opacity: 0;
-    transform: rotate(38deg) scaleY(1.02);
-  }
-}
-    
     .enemy {
       position: absolute;
       right: -74px;
@@ -271,25 +256,25 @@
       to   { background-position-x: -32px; }
     }
 
-    @keyframes slash {
-      0% {
-        opacity: 0;
-        transform: scaleX(0.1) skewX(-18deg);
-      }
-      30% {
-        opacity: 1;
-        transform: scaleX(1.05) skewX(-18deg);
-      }
-      100% {
-        opacity: 0;
-        transform: scaleX(1.15) skewX(-18deg);
-      }
-    }
-
     @keyframes playerPulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.06); }
       100% { transform: scale(1); }
+    }
+
+    @keyframes slashDown {
+      0% {
+        opacity: 0;
+        transform: rotate(-55deg) scaleY(0.15);
+      }
+      22% {
+        opacity: 1;
+        transform: rotate(-18deg) scaleY(1);
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(38deg) scaleY(1.02);
+      }
     }
 
     @keyframes enemyBreak {
@@ -336,9 +321,7 @@
     </div>
 
     <div class="sword" id="sword"></div>
-
     <div class="enemy" id="enemy"></div>
-
     <div class="ground"></div>
 
     <div class="flash" id="flash"></div>
@@ -352,134 +335,134 @@
   </div>
 
   <script>
-const player = document.getElementById("player");
-const sword = document.getElementById("sword");
-const enemy = document.getElementById("enemy");
-const score = document.getElementById("score");
-const flash = document.getElementById("flash");
-const slashText = document.getElementById("slashText");
-const gameOver = document.getElementById("gameOver");
-const finalScore = document.getElementById("finalScore");
-const retryBtn = document.getElementById("retryBtn");
+    const player = document.getElementById("player");
+    const sword = document.getElementById("sword");
+    const enemy = document.getElementById("enemy");
+    const score = document.getElementById("score");
+    const flash = document.getElementById("flash");
+    const slashText = document.getElementById("slashText");
+    const gameOver = document.getElementById("gameOver");
+    const finalScore = document.getElementById("finalScore");
+    const retryBtn = document.getElementById("retryBtn");
 
-let killCount = 0;
-let attacking = false;
-let gameEnded = false;
-let canAttack = false;
+    let killCount = 0;
+    let attacking = false;
+    let gameEnded = false;
+    let canAttack = false;
 
-let enemyX = window.innerWidth + 80;
-let enemySpeed = 6.5;
-
-setTimeout(() => {
-  canAttack = true;
-}, 600);
-
-function resetEnemy() {
-  enemyX = window.innerWidth + Math.random() * 180 + 40;
-  enemy.classList.remove("hit");
-  enemy.style.display = "block";
-}
-
-function updateEnemy() {
-  if (gameEnded) return;
-
-  enemyX -= enemySpeed;
-  enemy.style.right = (window.innerWidth - enemyX) + "px";
-
-  if (enemyX < -100) {
-    gameEnded = true;
-    endGame();
-    return;
-  }
-
-  checkCollision();
-  requestAnimationFrame(updateEnemy);
-}
-
-function attack() {
-  if (!canAttack || attacking || gameEnded) return;
-
-  attacking = true;
-
-  player.classList.add("attack");
-  sword.classList.remove("active");
-  void sword.offsetWidth;
-  sword.classList.add("active");
-
-  if (navigator.vibrate) navigator.vibrate(18);
-
-  const slashLeft = 130;
-  const slashRight = slashLeft + 120;
-  const enemyLeft = enemyX - 48;
-  const enemyRight = enemyX;
-
-  const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
-
-  if (inRange) {
-    killCount += 1;
-    score.textContent = killCount;
-
-    enemy.classList.add("hit");
-
-    flash.classList.remove("active");
-    slashText.classList.remove("show");
-    void flash.offsetWidth;
-    void slashText.offsetWidth;
-    flash.classList.add("active");
-    slashText.classList.add("show");
+    let enemyX = window.innerWidth + 180;
+    let enemySpeed = 4.8;
 
     setTimeout(() => {
+      canAttack = true;
+    }, 700);
+
+    function resetEnemy() {
+      enemyX = window.innerWidth + Math.random() * 180 + 80;
+      enemy.classList.remove("hit");
+      enemy.style.display = "block";
+    }
+
+    function updateEnemy() {
+      if (gameEnded) return;
+
+      enemyX -= enemySpeed;
+      enemy.style.right = (window.innerWidth - enemyX) + "px";
+
+      if (enemyX < -100) {
+        resetEnemy();
+      }
+
+      checkCollision();
+      requestAnimationFrame(updateEnemy);
+    }
+
+    function attack() {
+      if (!canAttack || attacking || gameEnded) return;
+
+      attacking = true;
+
+      player.classList.add("attack");
+      sword.classList.remove("active");
+      void sword.offsetWidth;
+      sword.classList.add("active");
+
+      if (navigator.vibrate) navigator.vibrate(18);
+
+      const slashLeft = 110;
+      const slashRight = 190;
+      const enemyLeft = enemyX - 48;
+      const enemyRight = enemyX;
+
+      const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
+
+      if (inRange) {
+        killCount += 1;
+        score.textContent = killCount;
+
+        enemy.classList.add("hit");
+
+        flash.classList.remove("active");
+        slashText.classList.remove("show");
+        void flash.offsetWidth;
+        void slashText.offsetWidth;
+        flash.classList.add("active");
+        slashText.classList.add("show");
+
+        setTimeout(() => {
+          resetEnemy();
+        }, 180);
+      }
+
+      setTimeout(() => {
+        player.classList.remove("attack");
+        attacking = false;
+      }, 220);
+    }
+
+    function checkCollision() {
+      if (gameEnded) return;
+      if (enemy.classList.contains("hit")) return;
+      if (enemyX > window.innerWidth) return;
+
+      const playerZoneLeft = 62;
+      const playerZoneRight = 146;
+
+      const enemyLeft = enemyX - 48;
+      const enemyRight = enemyX;
+
+      if (enemyRight > playerZoneLeft + 10 && enemyLeft < playerZoneRight - 8) {
+        gameEnded = true;
+        endGame();
+      }
+    }
+
+    function endGame() {
+      finalScore.textContent = killCount + "体撃破";
+      gameOver.style.display = "flex";
+    }
+
+    function restartGame() {
+      killCount = 0;
+      score.textContent = "0";
+      gameEnded = false;
+      attacking = false;
+      canAttack = false;
+      gameOver.style.display = "none";
+
+      setTimeout(() => {
+        canAttack = true;
+      }, 700);
+
       resetEnemy();
-    }, 180);
-  }
+      requestAnimationFrame(updateEnemy);
+    }
 
-  setTimeout(() => {
-    player.classList.remove("attack");
-    attacking = false;
-  }, 220);
-}
+    window.addEventListener("click", attack);
+    retryBtn.addEventListener("click", restartGame);
 
-function checkCollision() {
-  if (gameEnded) return;
-
-  const playerZoneLeft = 62;
-  const playerZoneRight = 62 + 84;
-
-  const enemyLeft = enemyX - 48;
-  const enemyRight = enemyX;
-
-  if (enemyRight > playerZoneLeft + 16 && enemyLeft < playerZoneRight - 10) {
-    gameEnded = true;
-    endGame();
-  }
-}
-
-function endGame() {
-  finalScore.textContent = killCount + "体撃破";
-  gameOver.style.display = "flex";
-}
-
-function restartGame() {
-  killCount = 0;
-  score.textContent = "0";
-  gameEnded = false;
-  attacking = false;
-  canAttack = false;
-  gameOver.style.display = "none";
-
-  setTimeout(() => {
-    canAttack = true;
-  }, 600);
-
-  resetEnemy();
-  requestAnimationFrame(updateEnemy);
-}
-
-window.addEventListener("click", attack);
-retryBtn.addEventListener("click", restartGame);
-
-resetEnemy();
-requestAnimationFrame(updateEnemy);
-</script>
+    resetEnemy();
+    requestAnimationFrame(updateEnemy);
+  </script>
 </body>
 </html>
