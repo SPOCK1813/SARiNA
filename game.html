@@ -134,7 +134,6 @@
         0 0 28px rgba(0,255,136,0.72),
         0 0 56px rgba(0,255,136,0.35);
       transform-origin: 50% 100%;
-      transform: rotate(-145deg) scale(0.3);
       opacity: 0;
       z-index: 40;
       pointer-events: none;
@@ -363,16 +362,25 @@
 
     function showSword() {
   sword.style.opacity = "1";
-  sword.style.transform = "rotate(-65deg) scale(1)";
+
+  // 構え（上）
+  sword.style.transform = "rotate(-145deg) scale(0.3)";
 
   setTimeout(() => {
+    // 振り下ろし
+    sword.style.transform = "rotate(-40deg) scale(1)";
+  }, 10);
+
+  setTimeout(() => {
+    // 斬り抜け
+    sword.style.transform = "rotate(25deg) scale(1)";
+  }, 120);
+
+  setTimeout(() => {
+    // リセット
     sword.style.opacity = "0";
-    sword.style.transform = "rotate(20deg) scale(1)";
-  }, 110);
-
-  setTimeout(() => {
     sword.style.transform = "rotate(-145deg) scale(0.3)";
-  }, 220);
+  }, 240);
     }
 
     function attack() {
