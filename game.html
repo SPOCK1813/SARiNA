@@ -393,17 +393,17 @@
       if (navigator.vibrate) navigator.vibrate(18);
 
       const swordBaseX = 156;   // 持ち手あたり
-const swordTipX  = 240;   // 剣先の届く位置
-const slashLeft = swordBaseX;
-const slashRight = swordTipX;
+      const swordTipX  = 240;   // 剣先の届く位置
+      const slashLeft = swordBaseX;
+      const slashRight = swordTipX;
 
-const enemyLeft = enemyX;
-const enemyRight = enemyX + 48;
+      const enemyLeft = enemyX;
+      const enemyRight = enemyX + 48;
 
-const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
+      const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
 
       if (inRange) {
-  killCount += 1;
+        killCount += 1;
   score.textContent = killCount;
 
   enemy.classList.add("hit");
@@ -463,26 +463,32 @@ const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
       gameOver.style.display = "none";
       sword.style.opacity = "0";
       sword.style.transform = "rotate(-65deg) scale(0.3)";
+let bgmStarted = false;
 
-      enableAttackSoon();
-      resetEnemy();
-      requestAnimationFrame(updateEnemy);
-    }
+let bgmStarted = false;
 
-    window.addEventListener("pointerdown", () => {
+window.addEventListener("pointerdown", () => {
   attack();
 
   if (bgmStarted) return;
 
   const iframe = document.getElementById("bgmPlayer");
-  iframe.src += "&autoplay=1";
+  iframe.contentWindow.postMessage(
+    '{"event":"command","func":"playVideo","args":""}',
+    "*"
+  );
+
   bgmStarted = true;
-    });
+});
 
 retryBtn.addEventListener("pointerdown", (e) => {
   e.stopPropagation();
   restartGame();
 });
+
+enableAttackSoon();
+resetEnemy();
+requestAnimationFrame(updateEnemy);
 
     enableAttackSoon();
     resetEnemy();
@@ -495,7 +501,7 @@ retryBtn.addEventListener("pointerdown", (e) => {
   height="0"
   src="https://www.youtube.com/embed/MQ9jKR-oTkU?enablejsapi=1&loop=1&playlist=MQ9jKR-oTkU&start=17"
   frameborder="0"
-  allow="autoplay">
+    allow="autoplay; encrypted-media">
 </iframe>
   
 </body>
