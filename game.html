@@ -470,13 +470,12 @@
     requestAnimationFrame(updateEnemy);
   }
 
-  const bgm = document.getElementById("bgm");
-let bgmStarted = false;
-
 window.addEventListener("pointerdown", () => {
   attack();
 
   if (!bgmStarted) {
+    const bgm = document.getElementById("bgm");
+
     bgm.volume = 0.4;
     bgm.play();
     bgmStarted = true;
@@ -491,9 +490,8 @@ window.addEventListener("pointerdown", () => {
   enableAttackSoon();
   resetEnemy();
   requestAnimationFrame(updateEnemy);
+  
 </script>
-  
-<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
-  
+  <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
 </body>
 </html>
