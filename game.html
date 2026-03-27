@@ -292,7 +292,7 @@
     <div class="hint">TAP TO SLASH</div>
 
     <div class="player-wrap">
-      <img src="sarina-pixel.png" alt="player" class="player" id="player">
+<img src="sarina-stand.PNG" alt="player" class="player" id="player">
     </div>
 
     <div class="sword" id="sword"></div>
@@ -319,7 +319,10 @@
   const gameOver = document.getElementById("gameOver");
   const finalScore = document.getElementById("finalScore");
   const retryBtn = document.getElementById("retryBtn");
-
+  const PLAYER_STAND = "sarina-stand.PNG";
+  const PLAYER_ATTACK = "sarina-attack.PNG";
+  const PLAYER_DAMAGE = "sarina-damage.png";
+ 
   let killCount = 0;
   let attacking = false;
   let gameEnded = false;
@@ -389,6 +392,7 @@
 
     attacking = true;
     player.classList.add("attack");
+    player.src = PLAYER_ATTACK;
     showSword();
 
     if (navigator.vibrate) navigator.vibrate(18);
@@ -430,10 +434,10 @@
     }
 
     setTimeout(() => {
-      player.classList.remove("attack");
-      attacking = false;
+  player.classList.remove("attack");
+  player.src = PLAYER_STAND;
+  attacking = false;
     }, 260);
-  }
 
   function checkCollision() {
     if (gameEnded) return;
@@ -452,8 +456,12 @@
   }
 
   function endGame() {
-    gameEnded = true;
+  gameEnded = true;
+  player.src = PLAYER_DAMAGE;
+
+  setTimeout(() => {
     window.location.href = "retry.html";
+  }, 300);
   }
 
   function restartGame() {
@@ -462,6 +470,7 @@
     gameEnded = false;
     attacking = false;
     gameOver.style.display = "none";
+    player.src = PLAYER_STAND;
     sword.style.opacity = "0";
     sword.style.transform = "rotate(-170deg) scale(0.3)";
 
