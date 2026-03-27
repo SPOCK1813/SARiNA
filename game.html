@@ -470,19 +470,18 @@
     requestAnimationFrame(updateEnemy);
   }
 
-  window.addEventListener("pointerdown", () => {
-    attack();
+  const bgm = document.getElementById("bgm");
+let bgmStarted = false;
 
-    if (bgmStarted) return;
+window.addEventListener("pointerdown", () => {
+  attack();
 
-    const iframe = document.getElementById("bgmPlayer");
-    iframe.contentWindow.postMessage(
-      '{"event":"command","func":"playVideo","args":""}',
-      "*"
-    );
-
+  if (!bgmStarted) {
+    bgm.volume = 0.4;
+    bgm.play();
     bgmStarted = true;
-  });
+  }
+});
 
   retryBtn.addEventListener("pointerdown", (e) => {
     e.stopPropagation();
@@ -494,14 +493,7 @@
   requestAnimationFrame(updateEnemy);
 </script>
   
-  <iframe 
-  id="bgmPlayer"
-  width="0" 
-  height="0"
-  src="https://www.youtube.com/embed/MQ9jKR-oTkU?enablejsapi=1&loop=1&playlist=MQ9jKR-oTkU&start=17&autoplay=1"
-  frameborder="0"
-    allow="autoplay; encrypted-media">
-</iframe>
+<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
   
 </body>
 </html>
