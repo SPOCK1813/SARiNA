@@ -469,15 +469,34 @@ const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
       requestAnimationFrame(updateEnemy);
     }
 
-    window.addEventListener("pointerdown", attack);
-    retryBtn.addEventListener("pointerdown", (e) => {
-      e.stopPropagation();
-      restartGame();
+    window.addEventListener("pointerdown", () => {
+  attack();
+
+  if (bgmStarted) return;
+
+  const iframe = document.getElementById("bgmPlayer");
+  iframe.src += "&autoplay=1";
+  bgmStarted = true;
     });
+
+retryBtn.addEventListener("pointerdown", (e) => {
+  e.stopPropagation();
+  restartGame();
+});
 
     enableAttackSoon();
     resetEnemy();
     requestAnimationFrame(updateEnemy);
   </script>
+  
+  <iframe 
+  id="bgmPlayer"
+  width="0" 
+  height="0"
+  src="https://www.youtube.com/embed/MQ9jKR-oTkU?enablejsapi=1&loop=1&playlist=MQ9jKR-oTkU&start=17"
+  frameborder="0"
+  allow="autoplay">
+</iframe>
+  
 </body>
 </html>
