@@ -20,89 +20,43 @@
       width: 100vw;
       height: 100vh;
       background: #000;
+      overflow: hidden;
     }
 
-    video,
-.frame,
-canvas.preview {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-video {
-  z-index: 1;
-  background: #000;
-  object-fit: contain;
-}
-
-.frame {
-  z-index: 3;
-  pointer-events: none;
-  object-fit: contain;
-}
-
-canvas.preview {
-  z-index: 1;
-  background: #000;
-  object-fit: contain;
-}
-
-    video {
+    /* 9:16の表示枠を中央に固定 */
+    .camera-stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(100vw, calc(100vh * 9 / 16));
+      height: min(100vh, calc(100vw * 16 / 9));
+      aspect-ratio: 9 / 16;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
       z-index: 1;
       background: #000;
     }
 
-    .frame {
+    #video,
+    #frame,
+    #previewCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ライブ表示は枠いっぱいに */
+    #video {
+      z-index: 1;
+      object-fit: cover;
+      background: #000;
+    }
+
+    #frame {
       z-index: 3;
-      pointer-events: none;
       object-fit: contain;
-    }
-
-  .ui {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(max(22px, env(safe-area-inset-bottom)) + 28px);
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  padding: 0 18px;
-}
-
-    button {
-      appearance: none;
-      border: 1px solid rgba(0,255,136,0.45);
-      background: rgba(0,0,0,0.45);
-      color: #effff5;
-      padding: 14px 18px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 700;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow:
-        0 0 14px rgba(0,255,136,0.14),
-        inset 0 0 10px rgba(0,255,136,0.06);
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .shutter {
-      width: 76px;
-      height: 76px;
-      border-radius: 999px;
-      border: 3px solid #ffffff;
-      background:
-        radial-gradient(circle at center, #ffffff 0 42%, rgba(255,255,255,0.22) 43% 100%);
-      box-shadow:
-        0 0 18px rgba(0,255,136,0.25),
-        0 0 36px rgba(0,255,136,0.12);
-      padding: 0;
+      pointer-events: none;
     }
 
     .topbar {
@@ -110,7 +64,7 @@ canvas.preview {
       top: max(14px, env(safe-area-inset-top));
       left: 0;
       right: 0;
-      z-index: 5;
+      z-index: 10;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -132,12 +86,59 @@ canvas.preview {
       -webkit-backdrop-filter: blur(8px);
     }
 
+    button {
+      appearance: none;
+      border: 1px solid rgba(0,255,136,0.45);
+      background: rgba(0,0,0,0.45);
+      color: #effff5;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 14px rgba(0,255,136,0.14),
+        inset 0 0 10px rgba(0,255,136,0.06);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .ui {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(max(22px, env(safe-area-inset-bottom)) + 34px);
+      z-index: 12;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      padding: 0 18px;
+      align-items: center;
+    }
+
+    .shutter {
+      width: 76px;
+      height: 76px;
+      border-radius: 999px;
+      border: 3px solid #ffffff;
+      background:
+        radial-gradient(circle at center, #ffffff 0 42%, rgba(255,255,255,0.22) 43% 100%);
+      box-shadow:
+        0 0 18px rgba(0,255,136,0.25),
+        0 0 36px rgba(0,255,136,0.12);
+      padding: 0;
+      flex: 0 0 auto;
+    }
+
     .msg {
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      z-index: 6;
+      z-index: 20;
       width: min(88vw, 420px);
       padding: 18px 20px;
       border-radius: 18px;
@@ -159,8 +160,8 @@ canvas.preview {
     .preview-wrap {
       position: absolute;
       inset: 0;
-      z-index: 10;
-      background: #000;
+      z-index: 30;
+      background: rgba(0,0,0,0.92);
       display: none;
     }
 
@@ -168,23 +169,34 @@ canvas.preview {
       display: block;
     }
 
-    .preview {
-      z-index: 1;
+    .preview-stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(100vw, calc(100vh * 9 / 16));
+      height: min(100vh, calc(100vw * 16 / 9));
+      aspect-ratio: 9 / 16;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
       background: #000;
+    }
+
+    #previewCanvas {
       object-fit: contain;
+      background: #000;
     }
 
     .preview-actions {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(max(22px, env(safe-area-inset-bottom)) + 28px);
-  z-index: 21;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  padding: 0 18px;
-  flex-wrap: wrap;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(max(22px, env(safe-area-inset-bottom)) + 34px);
+      z-index: 31;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 18px;
+      flex-wrap: wrap;
     }
 
     a.download-btn {
@@ -198,8 +210,10 @@ canvas.preview {
 </head>
 <body>
   <div class="app">
-    <video id="video" autoplay playsinline muted></video>
-<img class="frame" id="frame" src="camera-frame.PNG" alt="birthday frame" />
+    <div class="camera-stage" id="cameraStage">
+      <video id="video" autoplay playsinline muted></video>
+      <img id="frame" src="camera-frame.PNG" alt="birthday frame" />
+    </div>
 
     <div class="topbar">
       <div class="pill">SARiNA BIRTHDAY CAMERA</div>
@@ -214,11 +228,13 @@ canvas.preview {
     <div class="ui">
       <button id="switchBtn" type="button">切替</button>
       <button id="shutterBtn" class="shutter" type="button" aria-label="撮影"></button>
-      <button id="retryLiveBtn" type="button">再読み込み</button>
+      <button id="retryLiveBtn" type="button">再起動</button>
     </div>
 
     <div id="previewWrap" class="preview-wrap">
-      <canvas id="previewCanvas" class="preview"></canvas>
+      <div class="preview-stage">
+        <canvas id="previewCanvas"></canvas>
+      </div>
       <div class="preview-actions">
         <button id="retakeBtn" type="button">撮り直し</button>
         <a id="downloadBtn" class="download-btn" href="#" download="sarina_birthday_2026_07_08.png">
@@ -240,6 +256,7 @@ canvas.preview {
     const previewCanvas = document.getElementById("previewCanvas");
     const retakeBtn = document.getElementById("retakeBtn");
     const downloadBtn = document.getElementById("downloadBtn");
+    const cameraStage = document.getElementById("cameraStage");
 
     let currentFacingMode = "user";
     let currentStream = null;
@@ -263,7 +280,6 @@ canvas.preview {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         currentStream = stream;
         video.srcObject = stream;
-
         await video.play();
 
         message.classList.add("hidden");
@@ -272,7 +288,7 @@ canvas.preview {
         message.classList.remove("hidden");
         message.innerHTML =
           "カメラを起動できませんでした。<br>" +
-          "Safari/Chromeで開いて、カメラを許可してください。";
+          "Safariで開いて、カメラを許可してください。";
       }
     }
 
@@ -287,66 +303,52 @@ canvas.preview {
       await startCamera();
     }
 
-    function drawContainImage(ctx, img, canvasWidth, canvasHeight) {
-      const imgRatio = img.width / img.height;
-      const canvasRatio = canvasWidth / canvasHeight;
-
-      let drawWidth, drawHeight, dx, dy;
-
-      if (imgRatio > canvasRatio) {
-        drawWidth = canvasWidth;
-        drawHeight = canvasWidth / imgRatio;
-        dx = 0;
-        dy = (canvasHeight - drawHeight) / 2;
-      } else {
-        drawHeight = canvasHeight;
-        drawWidth = canvasHeight * imgRatio;
-        dx = (canvasWidth - drawWidth) / 2;
-        dy = 0;
-      }
-
-      ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
-    }
-
     function capture() {
       if (!video.videoWidth || !video.videoHeight) return;
 
       const canvas = previewCanvas;
       const ctx = canvas.getContext("2d");
 
-      canvas.width = 1080;
-      canvas.height = 1920;
+      const outputWidth = 1080;
+      const outputHeight = 1920;
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, outputWidth, outputHeight);
 
+      // ライブ表示と同じ「cover」の切り抜きで保存する
       const videoRatio = video.videoWidth / video.videoHeight;
-      const canvasRatio = canvas.width / canvas.height;
+      const stageRatio = cameraStage.clientWidth / cameraStage.clientHeight;
 
-      let sx, sy, sw, sh;
+      let sx = 0;
+      let sy = 0;
+      let sw = video.videoWidth;
+      let sh = video.videoHeight;
 
-      if (videoRatio > canvasRatio) {
+      if (videoRatio > stageRatio) {
+        // 横が余る → 左右カット
         sh = video.videoHeight;
-        sw = sh * canvasRatio;
+        sw = sh * stageRatio;
         sx = (video.videoWidth - sw) / 2;
-        sy = 0;
       } else {
+        // 縦が余る → 上下カット
         sw = video.videoWidth;
-        sh = sw / canvasRatio;
-        sx = 0;
+        sh = sw / stageRatio;
         sy = (video.videoHeight - sh) / 2;
       }
 
       if (currentFacingMode === "user") {
         ctx.save();
-        ctx.translate(canvas.width, 0);
+        ctx.translate(outputWidth, 0);
         ctx.scale(-1, 1);
-        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, outputWidth, outputHeight);
         ctx.restore();
       } else {
-        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, outputWidth, outputHeight);
       }
 
-      drawContainImage(ctx, frame, canvas.width, canvas.height);
+      // フレームは出力いっぱいに重ねる
+      ctx.drawImage(frame, 0, 0, outputWidth, outputHeight);
 
       const dataUrl = canvas.toDataURL("image/png");
       downloadBtn.href = dataUrl;
@@ -366,10 +368,7 @@ canvas.preview {
     retryLiveBtn.addEventListener("click", startCamera);
     retakeBtn.addEventListener("click", retake);
 
-    frame.addEventListener("load", () => {
-      startCamera();
-    });
-
+    frame.addEventListener("load", startCamera);
     window.addEventListener("beforeunload", stopCamera);
   </script>
 </body>
