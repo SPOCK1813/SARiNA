@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SARiNA BIRTHDAY CAMERA</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
+
+    video,
+    .frame,
+    canvas.preview {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    video {
+      z-index: 1;
+      background: #000;
+    }
+
+    .frame {
+      z-index: 3;
+      pointer-events: none;
+      object-fit: contain;
+    }
+
+    .ui {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: max(22px, env(safe-area-inset-bottom));
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      padding: 0 18px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(0,255,136,0.45);
+      background: rgba(0,0,0,0.45);
+      color: #effff5;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 14px rgba(0,255,136,0.14),
+        inset 0 0 10px rgba(0,255,136,0.06);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .shutter {
+      width: 76px;
+      height: 76px;
+      border-radius: 999px;
+      border: 3px solid #ffffff;
+      background:
+        radial-gradient(circle at center, #ffffff 0 42%, rgba(255,255,255,0.22) 43% 100%);
+      box-shadow:
+        0 0 18px rgba(0,255,136,0.25),
+        0 0 36px rgba(0,255,136,0.12);
+      padding: 0;
+    }
+
+    .topbar {
+      position: absolute;
+      top: max(14px, env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      z-index: 5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,255,136,0.34);
+      background: rgba(0,0,0,0.42);
+      color: #dffff0;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .msg {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 6;
+      width: min(88vw, 420px);
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,255,136,0.28);
+      background: rgba(0,0,0,0.60);
+      color: #effff5;
+      text-align: center;
+      line-height: 1.8;
+      font-size: 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 0 26px rgba(0,255,136,0.12);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .preview-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: #000;
+      display: none;
+    }
+
+    .preview-wrap.show {
+      display: block;
+    }
+
+    .preview {
+      z-index: 1;
+      background: #000;
+      object-fit: contain;
+    }
+
+    .preview-actions {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: max(22px, env(safe-area-inset-bottom));
+      z-index: 11;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 18px;
+      flex-wrap: wrap;
+    }
+
+    a.download-btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 120px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <video id="video" autoplay playsinline muted></video>
+    <img class="frame" id="frame" src="camera-frame.png" alt="birthday frame" />
+
+    <div class="topbar">
+      <div class="pill">SARiNA BIRTHDAY CAMERA</div>
+      <button id="backBtn" type="button">戻る</button>
+    </div>
+
+    <div id="message" class="msg">
+      カメラを起動します。<br>
+      許可が出たら内カメラで自撮りできます。
+    </div>
+
+    <div class="ui">
+      <button id="switchBtn" type="button">切替</button>
+      <button id="shutterBtn" class="shutter" type="button" aria-label="撮影"></button>
+      <button id="retryLiveBtn" type="button">再読み込み</button>
+    </div>
+
+    <div id="previewWrap" class="preview-wrap">
+      <canvas id="previewCanvas" class="preview"></canvas>
+      <div class="preview-actions">
+        <button id="retakeBtn" type="button">撮り直し</button>
+        <a id="downloadBtn" class="download-btn" href="#" download="sarina_birthday_2026_07_08.png">
+          <button type="button">保存</button>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById("video");
+    const frame = document.getElementById("frame");
+    const message = document.getElementById("message");
+    const switchBtn = document.getElementById("switchBtn");
+    const shutterBtn = document.getElementById("shutterBtn");
+    const retryLiveBtn = document.getElementById("retryLiveBtn");
+    const backBtn = document.getElementById("backBtn");
+    const previewWrap = document.getElementById("previewWrap");
+    const previewCanvas = document.getElementById("previewCanvas");
+    const retakeBtn = document.getElementById("retakeBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    let currentFacingMode = "user";
+    let currentStream = null;
+
+    async function startCamera() {
+      message.classList.remove("hidden");
+      message.innerHTML = "カメラを起動しています…";
+
+      try {
+        stopCamera();
+
+        const constraints = {
+          audio: false,
+          video: {
+            facingMode: currentFacingMode,
+            width: { ideal: 1080 },
+            height: { ideal: 1920 }
+          }
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        currentStream = stream;
+        video.srcObject = stream;
+
+        await video.play();
+
+        message.classList.add("hidden");
+      } catch (err) {
+        console.error(err);
+        message.classList.remove("hidden");
+        message.innerHTML =
+          "カメラを起動できませんでした。<br>" +
+          "Safari/Chromeで開いて、カメラを許可してください。";
+      }
+    }
+
+    function stopCamera() {
+      if (!currentStream) return;
+      currentStream.getTracks().forEach(track => track.stop());
+      currentStream = null;
+    }
+
+    async function switchCamera() {
+      currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+      await startCamera();
+    }
+
+    function drawContainImage(ctx, img, canvasWidth, canvasHeight) {
+      const imgRatio = img.width / img.height;
+      const canvasRatio = canvasWidth / canvasHeight;
+
+      let drawWidth, drawHeight, dx, dy;
+
+      if (imgRatio > canvasRatio) {
+        drawWidth = canvasWidth;
+        drawHeight = canvasWidth / imgRatio;
+        dx = 0;
+        dy = (canvasHeight - drawHeight) / 2;
+      } else {
+        drawHeight = canvasHeight;
+        drawWidth = canvasHeight * imgRatio;
+        dx = (canvasWidth - drawWidth) / 2;
+        dy = 0;
+      }
+
+      ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+    }
+
+    function capture() {
+      if (!video.videoWidth || !video.videoHeight) return;
+
+      const canvas = previewCanvas;
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = 1080;
+      canvas.height = 1920;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const videoRatio = video.videoWidth / video.videoHeight;
+      const canvasRatio = canvas.width / canvas.height;
+
+      let sx, sy, sw, sh;
+
+      if (videoRatio > canvasRatio) {
+        sh = video.videoHeight;
+        sw = sh * canvasRatio;
+        sx = (video.videoWidth - sw) / 2;
+        sy = 0;
+      } else {
+        sw = video.videoWidth;
+        sh = sw / canvasRatio;
+        sx = 0;
+        sy = (video.videoHeight - sh) / 2;
+      }
+
+      if (currentFacingMode === "user") {
+        ctx.save();
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      } else {
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+      }
+
+      drawContainImage(ctx, frame, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL("image/png");
+      downloadBtn.href = dataUrl;
+      previewWrap.classList.add("show");
+    }
+
+    function retake() {
+      previewWrap.classList.remove("show");
+    }
+
+    backBtn.addEventListener("click", () => {
+      history.back();
+    });
+
+    switchBtn.addEventListener("click", switchCamera);
+    shutterBtn.addEventListener("click", capture);
+    retryLiveBtn.addEventListener("click", startCamera);
+    retakeBtn.addEventListener("click", retake);
+
+    frame.addEventListener("load", () => {
+      startCamera();
+    });
+
+    window.addEventListener("beforeunload", stopCamera);
+  </script>
+</body>
+</html>
