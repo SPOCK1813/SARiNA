@@ -538,13 +538,13 @@
         return;
       }
 
-      const totalSeconds = Math.floor(diff / 1000);
-      const h = Math.floor(totalSeconds / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
+      const totalMinutes = Math.floor(diff / (1000 * 60));
+      const days = Math.floor(totalMinutes / (60 * 24));
+      const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+      const minutes = totalMinutes % 60;
 
       document.getElementById("time").innerHTML =
-        h + "h " + m + "m <span class='sec'>" + s + "s</span>";
+        "あと" + days + "日 " + hours + "時間 " + minutes + "分";
     }
 
     setupDailyBackground();
