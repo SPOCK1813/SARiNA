@@ -28,8 +28,28 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      z-index: -4;
+      transition: background-image 0.4s ease;
+      filter: brightness(0.6) blur(2px);
+    }
+
+    #bgNext {
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       z-index: -3;
-      transition: background-image 0.8s ease;
+      opacity: 0;
+      transform: scale(1);
+      transition: opacity 0.18s ease, transform 0.26s ease;
+      filter: brightness(0.6) blur(2px);
+      pointer-events: none;
+    }
+
+    #bgNext.show {
+      opacity: 1;
+      transform: scale(1.06);
     }
 
     #bgOverlay {
@@ -40,6 +60,29 @@
         linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.78));
       z-index: -2;
       pointer-events: none;
+    }
+
+    #bigCount {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(120px, 30vw, 260px);
+      font-weight: 900;
+      color: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9;
+      text-shadow:
+        0 0 20px rgba(255,255,255,0.95),
+        0 0 40px rgba(0,255,136,0.95),
+        0 0 80px rgba(0,255,136,0.55);
+      transform: scale(0.8);
+    }
+
+    #bigCount.show {
+      animation: beat 0.34s ease;
     }
 
     .hero-wrap {
@@ -69,12 +112,14 @@
     }
 
     .count-title {
+      margin-top: 20px;
       font-size: clamp(46px, 14vw, 104px);
       line-height: 0.95;
       letter-spacing: 4px;
       font-weight: 900;
       color: #f2fff7;
       text-shadow:
+        0 0 20px #00ff88,
         0 0 8px rgba(0,255,136,1),
         0 0 18px rgba(0,255,136,0.9),
         0 0 42px rgba(0,255,136,0.65),
@@ -93,9 +138,9 @@
     #time {
       margin-top: 24px;
       font-weight: 900;
-      line-height: 1.05;
-      font-size: clamp(28px, 8vw, 58px);
-      letter-spacing: 2px;
+      line-height: 1.18;
+      font-size: clamp(24px, 6.6vw, 52px);
+      letter-spacing: 1px;
       color: #f8fffb;
       text-shadow:
         0 0 8px rgba(0,255,136,0.9),
@@ -104,7 +149,7 @@
 
     #time .sec {
       display: inline-block;
-      font-size: clamp(52px, 15vw, 104px);
+      font-size: clamp(42px, 11vw, 84px);
       color: #00ff88;
       text-shadow:
         0 0 10px rgba(0,255,136,1),
@@ -395,6 +440,12 @@
       50% { transform: translateY(6px); opacity: 1; }
     }
 
+    @keyframes beat {
+      0%   { opacity: 0; transform: scale(0.7); }
+      40%  { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
     @media (max-width: 640px) {
       .photo-grid { grid-template-columns: 1fr; }
       .section { padding: 72px 18px; }
@@ -404,11 +455,14 @@
 <body>
 
   <div id="bgLayer"></div>
+  <div id="bgNext"></div>
   <div id="bgOverlay"></div>
+  <div id="bigCount"></div>
+  <audio id="beep" src="beep.mp3" preload="auto"></audio>
 
   <div class="hero-wrap">
     <div class="hero-screen" id="countdown">
-　　　　<p class="pre-title">⚠️ TEST / 07.08 00:00 ONLY</p>
+      <p class="pre-title">07.08 / 00:00 ONLY</p>
       <h1 class="count-title">SARiNA<br>BIRTHDAY</h1>
       <p id="time"></p>
       <p class="mystery-line">このページは、その時まで未完成。</p>
@@ -492,31 +546,55 @@
 
   <script>
     const target = new Date("2026-03-25T09:00:00+09:00");
-    // テスト時だけ使う
-    // const target = new Date("2026-03-25T09:00:00+09:00");
+    // const target = new Date("2026-03-25T09:00:00+09:00"); // テスト時だけ使う
 
-    function daysUntilBirthday(now, target) {
+    const bgLayer = document.getElementById("bgLayer");
+    const bgNext = document.getElementById("bgNext");
+    const note = document.getElementById("dayChangeNote");
+    const bigCount = document.getElementById("bigCount");
+    const beep = document.getElementById("beep");
+    let lastSec = -1;
+    let soundArmed = false;
+
+    // iPhone系で最後10秒の音が鳴る可能性を上げるため、最初のタップで音を解放
+    window.addEventListener("pointerdown", () => {
+      if (soundArmed) return;
+      soundArmed = true;
+      beep.volume = 0.9;
+      beep.play().then(() => {
+        beep.pause();
+        beep.currentTime = 0;
+      }).catch(() => {});
+    }, { once: true });
+
+    function daysUntilBirthday(now, targetDate) {
       const startNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const startTarget = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+      const startTarget = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
       return Math.ceil((startTarget - startNow) / (1000 * 60 * 60 * 24));
     }
 
     function setupDailyBackground() {
-      const bgLayer = document.getElementById("bgLayer");
-      const note = document.getElementById("dayChangeNote");
       const now = new Date();
       const dayDiff = daysUntilBirthday(now, target);
 
       if (dayDiff > 30) {
         bgLayer.style.backgroundImage = 'url("before30.jpg")';
+        note.style.display = "block";
         note.innerHTML = "30日前から毎日背景写真が切り替わります";
       } else if (dayDiff >= 1 && dayDiff <= 30) {
         bgLayer.style.backgroundImage = `url("day${dayDiff}.jpg")`;
+        note.style.display = "block";
         note.innerHTML = `あと${dayDiff}日<br>背景写真は毎日切り替わります`;
       } else if (dayDiff <= 0) {
         bgLayer.style.backgroundImage = 'url("day1.jpg")';
         note.style.display = "none";
       }
+    }
+
+    function playBeep() {
+      if (!soundArmed) return;
+      beep.currentTime = 0;
+      beep.play().catch(() => {});
     }
 
     function updateCountdown() {
@@ -530,12 +608,39 @@
       }
 
       const totalSeconds = Math.floor(diff / 1000);
-      const h = Math.floor(totalSeconds / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
+      const days = Math.floor(totalSeconds / (60 * 60 * 24));
+      const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
 
       document.getElementById("time").innerHTML =
-        h + "h " + m + "m <span class='sec'>" + s + "s</span>";
+        "あと" + days + "日 " + hours + "時間 " + minutes + "分 " +
+        "<span class='sec'>" + seconds + "</span>秒";
+
+      // 最後10秒の演出
+      if (totalSeconds <= 10 && totalSeconds > 0) {
+        if (lastSec !== seconds) {
+          playBeep();
+
+          bigCount.textContent = seconds;
+          bigCount.classList.remove("show");
+          void bigCount.offsetWidth;
+          bigCount.classList.add("show");
+
+          const nextImage = `count${seconds}.jpg`;
+          bgNext.style.backgroundImage = `url("${nextImage}")`;
+          bgNext.classList.remove("show");
+          void bgNext.offsetWidth;
+          bgNext.classList.add("show");
+
+          setTimeout(() => {
+            bgLayer.style.backgroundImage = `url("${nextImage}")`;
+            bgNext.classList.remove("show");
+          }, 200);
+
+          lastSec = seconds;
+        }
+      }
     }
 
     setupDailyBackground();
@@ -625,6 +730,10 @@
         });
         startFallingIcons();
       }, 3000);
+
+      setTimeout(() => {
+        window.location.href = "game.html";
+      }, 3500);
     }
 
     function startFallingIcons() {
