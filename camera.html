@@ -15,21 +15,21 @@
       overflow: hidden;
     }
 
-    .app {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      overflow: hidden;
-    }
+  .app {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  background: #000;
+  overflow: hidden;
+  }
 
     /* 9:16の表示枠を中央に固定 */
-    .camera-stage {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(100vw, calc(100vh * 9 / 16));
-      height: min(100vh, calc(100vw * 16 / 9));
+ .camera-stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  height: min(100dvh, calc(100vw * 16 / 9));
       aspect-ratio: 9 / 16;
       transform: translate(-50%, -50%);
       overflow: hidden;
@@ -170,11 +170,11 @@
     }
 
     .preview-stage {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: min(100vw, calc(100vh * 9 / 16));
-      height: min(100vh, calc(100vw * 16 / 9));
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  height: min(100dvh, calc(100vw * 16 / 9));
       aspect-ratio: 9 / 16;
       transform: translate(-50%, -50%);
       overflow: hidden;
@@ -339,16 +339,7 @@ if (videoRatio > stageRatio) {
   dx = (outputWidth - dw) / 2;
   dy = 0;
 }
-
-if (currentFacingMode === "user") {
-  ctx.save();
-  ctx.translate(outputWidth, 0);
-  ctx.scale(-1, 1);
-  ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, dx, dy, dw, dh);
-  ctx.restore();
-} else {
-  ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, dx, dy, dw, dh);
-}
+      ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, dx, dy, dw, dh);
       // フレームは出力いっぱいに重ねる
       ctx.drawImage(frame, 0, 0, outputWidth, outputHeight);
 
