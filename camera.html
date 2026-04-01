@@ -341,7 +341,7 @@ if (videoRatio > stageRatio) {
 }
       ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, dx, dy, dw, dh);
       // フレームは出力いっぱいに重ねる
-      ctx.drawImage(frame, 0, 0, outputWidth, outputHeight);
+      drawContainImage(ctx, frame, outputWidth, outputHeight);
 
       const dataUrl = canvas.toDataURL("image/png");
       downloadBtn.href = dataUrl;
@@ -363,6 +363,27 @@ if (videoRatio > stageRatio) {
 
     frame.addEventListener("load", startCamera);
     window.addEventListener("beforeunload", stopCamera);
+    function drawContainImage(ctx, img, canvasWidth, canvasHeight) {
+  const imgRatio = img.width / img.height;
+  const canvasRatio = canvasWidth / canvasHeight;
+
+  let drawWidth, drawHeight, dx, dy;
+
+  if (imgRatio > canvasRatio) {
+    drawWidth = canvasWidth;
+    drawHeight = canvasWidth / imgRatio;
+    dx = 0;
+    dy = (canvasHeight - drawHeight) / 2;
+  } else {
+    drawHeight = canvasHeight;
+    drawWidth = canvasHeight * imgRatio;
+    dx = (canvasWidth - drawWidth) / 2;
+    dy = 0;
+  }
+
+  ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+    }
+    
   </script>
 </body>
 </html>
