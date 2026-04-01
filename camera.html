@@ -314,8 +314,10 @@
   const outputWidth = Math.round(cameraStage.clientWidth);
 const outputHeight = Math.round(cameraStage.clientHeight);
       
-  canvas.width = outputWidth;
-  canvas.height = outputHeight;
+canvas.width = outputWidth * 2;
+canvas.height = outputHeight * 2;
+
+ctx.scale(2, 2);
 
   ctx.clearRect(0, 0, outputWidth, outputHeight);
 
