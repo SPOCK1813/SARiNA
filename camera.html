@@ -309,8 +309,6 @@
       const canvas = previewCanvas;
       const ctx = canvas.getContext("2d");
 
-      const rect = cameraStage.getBoundingClientRect();
-
       const outputWidth = rect.width;
       const outputHeight = rect.height;
       
@@ -367,8 +365,8 @@ if (videoRatio > stageRatio) {
     frame.addEventListener("load", startCamera);
     window.addEventListener("beforeunload", stopCamera);
     function drawContainImage(ctx, img, canvasWidth, canvasHeight) {
-  const imgRatio = img.width / img.height;
-  const canvasRatio = canvasWidth / canvasHeight;
+      const imgRatio = img.naturalWidth / img.naturalHeight; 
+      const canvasRatio = canvasWidth / canvasHeight;
 
   let drawWidth, drawHeight, dx, dy;
 
