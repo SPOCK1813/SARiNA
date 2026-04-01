@@ -309,8 +309,11 @@
       const canvas = previewCanvas;
       const ctx = canvas.getContext("2d");
 
-      const outputWidth = 1080;
-      const outputHeight = 1920;
+      const rect = cameraStage.getBoundingClientRect();
+
+      const outputWidth = rect.width;
+      const outputHeight = rect.height;
+      
       canvas.width = outputWidth;
       canvas.height = outputHeight;
 
