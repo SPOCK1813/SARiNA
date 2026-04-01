@@ -336,13 +336,23 @@ const outputHeight = Math.round(cameraStage.clientHeight);
     dy = 0;
   }
 
-  ctx.drawImage(
-    video,
-    0, 0,
-    video.videoWidth, video.videoHeight,
-    dx, dy,
-    dw, dh
-  );
+  const tuneX = 0;
+const tuneY = 0;
+
+ctx.save();
+ctx.translate(outputWidth, 0);
+ctx.scale(-1, 1);
+
+ctx.drawImage(
+  video,
+  0, 0,
+  video.videoWidth, video.videoHeight,
+  Math.round(dx + tuneX),
+  Math.round(dy + tuneY),
+  Math.round(dw),
+  Math.round(dh)
+);
+      ctx.restore();
 
   drawContainImage(ctx, frame, outputWidth, outputHeight);
 
