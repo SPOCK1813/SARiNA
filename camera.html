@@ -304,51 +304,52 @@
     }
 
     function capture() {
-      if (!video.videoWidth || !video.videoHeight) return;
+  if (!video.videoWidth || !video.videoHeight) return;
+  if (!frame.naturalWidth || !frame.naturalHeight) return;
 
-      const canvas = previewCanvas;
-      const ctx = canvas.getContext("2d");
+  const canvas = previewCanvas;
+  const ctx = canvas.getContext("2d");
 
-      const outputWidth = rect.width;
-      const outputHeight = rect.height;
+  const outputWidth = Math.round(cameraStage.clientWidth);
+const outputHeight = Math.round(cameraStage.clientHeight);
       
-      canvas.width = outputWidth;
-      canvas.height = outputHeight;
+  canvas.width = outputWidth;
+  canvas.height = outputHeight;
 
-      ctx.clearRect(0, 0, outputWidth, outputHeight);
+  ctx.clearRect(0, 0, outputWidth, outputHeight);
 
-      // ライブ表示と同じ「cover」の切り抜きで保存する
-      // ライブ表示と同じ「contain」の見え方で保存する
-const videoRatio = video.videoWidth / video.videoHeight;
-const stageRatio = cameraStage.clientWidth / cameraStage.clientHeight;
+  const videoRatio = video.videoWidth / video.videoHeight;
+  const stageRatio = outputWidth / outputHeight;
 
-let dw = outputWidth;
-let dh = outputHeight;
-let dx = 0;
-let dy = 0;
+  let dw, dh, dx, dy;
 
-if (videoRatio > stageRatio) {
-  // 横長動画 → 幅ぴったり、高さ余る
-  dw = outputWidth;
-  dh = outputWidth / videoRatio;
-  dx = 0;
-  dy = (outputHeight - dh) / 2;
-} else {
-  // 縦長動画 → 高さぴったり、幅余る
-  dh = outputHeight;
-  dw = outputHeight * videoRatio;
-  dx = (outputWidth - dw) / 2;
-  dy = 0;
-}
-      ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, dx, dy, dw, dh);
-      // フレームは出力いっぱいに重ねる
-      drawContainImage(ctx, frame, outputWidth, outputHeight);
+  if (videoRatio > stageRatio) {
+    dw = outputWidth;
+    dh = outputWidth / videoRatio;
+    dx = 0;
+    dy = (outputHeight - dh) / 2;
+  } else {
+    dh = outputHeight;
+    dw = outputHeight * videoRatio;
+    dx = (outputWidth - dw) / 2;
+    dy = 0;
+  }
 
-      const dataUrl = canvas.toDataURL("image/png");
-      downloadBtn.href = dataUrl;
-      previewWrap.classList.add("show");
+  ctx.drawImage(
+    video,
+    0, 0,
+    video.videoWidth, video.videoHeight,
+    dx, dy,
+    dw, dh
+  );
+
+  drawContainImage(ctx, frame, outputWidth, outputHeight);
+
+  const dataUrl = canvas.toDataURL("image/png");
+  downloadBtn.href = dataUrl;
+  previewWrap.classList.add("show");
     }
-
+    
     function retake() {
       previewWrap.classList.remove("show");
     }
