@@ -645,7 +645,7 @@
 
     setupDailyBackground();
     updateCountdown();
-    setInterval(updateCountdown, 1000);
+    const countdownTimer = setInterval(updateCountdown, 1000);
 
     let shakeEnabled = false;
     let lastShake = 0;
