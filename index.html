@@ -650,7 +650,8 @@
     let shakeEnabled = false;
     let lastShake = 0;
     let effectPlayed = false;
-
+    let unlockShown = false;
+    
     function start() {
       if (
         typeof DeviceMotionEvent !== "undefined" &&
