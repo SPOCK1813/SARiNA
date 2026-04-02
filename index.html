@@ -598,50 +598,53 @@
     }
 
     function updateCountdown() {
-      const now = new Date();
-      const diff = target - now;
+  const now = new Date();
+  const diff = target - now;
 
-      if (diff <= 0) {
-        document.getElementById("countdown").style.display = "none";
-        document.getElementById("unlock").style.display = "flex";
-        return;
-      }
-
-      const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / (60 * 60 * 24));
-      const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      document.getElementById("time").innerHTML =
-        "あと" + days + "日 " + hours + "時間 " + minutes + "分 " +
-        "<span class='sec'>" + seconds + "</span>秒";
-
-      // 最後10秒の演出
-      if (totalSeconds <= 10 && totalSeconds > 0) {
-        if (lastSec !== seconds) {
-          playBeep();
-
-          bigCount.textContent = seconds;
-          bigCount.classList.remove("show");
-          void bigCount.offsetWidth;
-          bigCount.classList.add("show");
-
-          const nextImage = `count${seconds}.jpg`;
-          bgNext.style.backgroundImage = `url("${nextImage}")`;
-          bgNext.classList.remove("show");
-          void bgNext.offsetWidth;
-          bgNext.classList.add("show");
-
-          setTimeout(() => {
-            bgLayer.style.backgroundImage = `url("${nextImage}")`;
-            bgNext.classList.remove("show");
-          }, 200);
-
-          lastSec = seconds;
-        }
-      }
+  if (diff <= 0) {
+    if (!unlockShown && !effectPlayed) {
+      document.getElementById("countdown").style.display = "none";
+      document.getElementById("unlock").style.display = "flex";
+      unlockShown = true;
     }
+    return;
+  }
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / (60 * 60 * 24));
+  const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  document.getElementById("time").innerHTML =
+    "あと" + days + "日 " + hours + "時間 " + minutes + "分 " +
+    "<span class='sec'>" + seconds + "</span>秒";
+
+  // 最後10秒の演出
+  if (totalSeconds <= 10 && totalSeconds > 0) {
+    if (lastSec !== seconds) {
+      playBeep();
+
+      bigCount.textContent = seconds;
+      bigCount.classList.remove("show");
+      void bigCount.offsetWidth;
+      bigCount.classList.add("show");
+
+      const nextImage = `count${seconds}.jpg`;
+      bgNext.style.backgroundImage = `url("${nextImage}")`;
+      bgNext.classList.remove("show");
+      void bgNext.offsetWidth;
+      bgNext.classList.add("show");
+
+      setTimeout(() => {
+        bgLayer.style.backgroundImage = `url("${nextImage}")`;
+        bgNext.classList.remove("show");
+      }, 200);
+
+      lastSec = seconds;
+    }
+  }
+}
 
     setupDailyBackground();
     updateCountdown();
