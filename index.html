@@ -617,8 +617,8 @@
   const seconds = totalSeconds % 60;
 
   document.getElementById("time").innerHTML =
-    "あと" + days + "日 " + hours + "時間 " + minutes + "分 " +
-    "<span class='sec'>" + seconds + "</span>秒";
+  "あと" + days + "日 " + hours + "時間 " + minutes + "分<br>" +
+  "<span class='sec'>" + seconds + "</span>秒";
 
   // 最後10秒の演出
   if (totalSeconds <= 10 && totalSeconds > 0) {
