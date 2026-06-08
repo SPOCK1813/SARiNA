@@ -590,23 +590,25 @@
     }
 
     function setupDailyBackground() {
-      const now = new Date();
-      const dayDiff = daysUntilBirthday (now, target);
+  const now = new Date();
+  const diff = target - now;
+  const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+  const dayDiff = Math.floor(totalSeconds / (60 * 60 * 24));
 
-      if (dayDiff > 30) {
-        bgLayer.style.backgroundImage = 'url("before30.jpg")';
-        note.style.display = "block";
-        note.innerHTML = "30日前から毎日背景写真が切り替わります";
-      } else if (dayDiff >= 1 && dayDiff <= 30) {
-        bgLayer.style.backgroundImage = `url("day${dayDiff}.jpg")`;
-        note.style.display = "block";
-        note.innerHTML = `あと${dayDiff}日<br>背景写真は毎日切り替わります`;
-      } else {
-        bgLayer.style.backgroundImage = 'url("day1.jpg")';
-        note.style.display = "none";
-      }
-    }
-
+  if (dayDiff > 30) {
+    bgLayer.style.backgroundImage = 'url("before30.jpg")';
+    note.style.display = "block";
+    note.innerHTML = "30日前から<br>背景写真は毎日切り替わります";
+  } else if (dayDiff >= 1 && dayDiff <= 30) {
+    bgLayer.style.backgroundImage = `url("day${dayDiff}.jpg")`;
+    note.style.display = "block";
+    note.innerHTML = `あと${dayDiff}日<br>背景写真は毎日切り替わります`;
+  } else {
+    bgLayer.style.backgroundImage = 'url("day1.jpg")';
+    note.style.display = "none";
+  }
+}
+    
     function playBeep() {
       if (!soundArmed) return;
       beep.currentTime = 0;
