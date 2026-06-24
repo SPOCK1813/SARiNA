@@ -556,7 +556,7 @@
   </div>
 
   <script>
-    const target = new Date("2026-06-28T09:00:00+09:00");
+    const target = new Date("2026-07-08T00:00:00+09:00");
     // テスト用
     // const target = new Date("2026-03-25T09:00:00+09:00");
 
@@ -591,7 +591,7 @@
 
     function setupDailyBackground() {
   const now = new Date();
-  const diff = target - now;
+  const now = new Date("2026-06-28T00:00:00+09:00");
   const totalSeconds = Math.max(0, Math.floor(diff / 1000));
   const dayDiff = Math.floor(totalSeconds / (60 * 60 * 24));
 
