@@ -590,10 +590,13 @@
     }
 
     function setupDailyBackground() {
-  const now = new Date();
   const now = new Date("2026-06-28T00:00:00+09:00");
+  // テスト用：Day10を確認したい時だけ下の1行を使う
+  // const now = new Date("2026-06-28T00:00:00+09:00");
+
+  const diff = target - now;
   const totalSeconds = Math.max(0, Math.floor(diff / 1000));
-  const dayDiff = Math.floor(totalSeconds / (60 * 60 * 24));
+  const dayDiff = Math.ceil(totalSeconds / (60 * 60 * 24));
 
   if (dayDiff > 30) {
     bgLayer.style.backgroundImage = 'url("before30.jpg")';
