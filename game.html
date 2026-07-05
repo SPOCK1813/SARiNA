@@ -139,20 +139,20 @@
       pointer-events: none;
     }
 
-  .sword::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -18px;
-  transform: translateX(-50%);
-  width: 54px;
-  height: 10px;
-  border-radius: 999px;
-  background: #d7ffe9;
-  box-shadow:
-    0 0 8px rgba(0,255,136,0.9),
-    0 0 18px rgba(0,255,136,0.45);
-  }
+    .sword::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      transform: translateX(-50%);
+      width: 54px;
+      height: 10px;
+      border-radius: 999px;
+      background: #d7ffe9;
+      box-shadow:
+        0 0 8px rgba(0,255,136,0.9),
+        0 0 18px rgba(0,255,136,0.45);
+    }
 
     .enemy {
       position: absolute;
@@ -213,7 +213,7 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      background: rgba(0,0,0,0.48);
+      background: rgba(0,0,0,0.72);
       z-index: 50;
       padding: 24px;
       text-align: center;
@@ -236,7 +236,7 @@
     }
 
     .retry {
-      margin-top: 22px;
+      margin-top: 18px;
       padding: 14px 22px;
       border: 2px solid #00ff88;
       background: rgba(0,255,136,0.08);
@@ -249,18 +249,12 @@
 
     @keyframes groundMove {
       from { background-position-x: 0; }
-      to   { background-position-x: -32px; }
+      to { background-position-x: -32px; }
     }
 
     @keyframes enemyBreak {
-      0% {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-      }
-      100% {
-        opacity: 0;
-        transform: scale(1.35) rotate(18deg);
-      }
+      0% { opacity: 1; transform: scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: scale(1.35) rotate(18deg); }
     }
 
     @keyframes flashFx {
@@ -270,21 +264,13 @@
     }
 
     @keyframes slashTextFx {
-      0% {
-        opacity: 0;
-        transform: translateX(-50%) scale(0.78);
-      }
-      30% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translateX(-50%) scale(1.08);
-      }
+      0% { opacity: 0; transform: translateX(-50%) scale(0.78); }
+      30% { opacity: 1; transform: translateX(-50%) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.08); }
     }
   </style>
 </head>
+
 <body>
   <div class="game" id="game">
     <div class="title">SARiNA GREEN SWORD</div>
@@ -292,7 +278,7 @@
     <div class="hint">TAP TO SLASH</div>
 
     <div class="player-wrap">
-<img src="sarina-stand.PNG" alt="player" class="player" id="player">
+      <img src="sarina-stand.PNG" alt="player" class="player" id="player">
     </div>
 
     <div class="sword" id="sword"></div>
@@ -303,205 +289,207 @@
     <div class="slash-text" id="slashText">SLASH!</div>
 
     <div class="game-over" id="gameOver">
-      <h2>GAME OVER</h2>
+      <h2 id="resultTitle">GAME OVER</h2>
       <p id="finalScore">0体撃破</p>
-      <button class="retry" id="retryBtn">RETRY</button>
+      <button class="retry" id="retryBtn">もう一度挑戦</button>
+      <button class="retry" onclick="location.href='index.html'">公開ページへ戻る</button>
     </div>
   </div>
 
-<script>
-  const player = document.getElementById("player");
-  const sword = document.getElementById("sword");
-  const enemy = document.getElementById("enemy");
-  const score = document.getElementById("score");
-  const flash = document.getElementById("flash");
-  const slashText = document.getElementById("slashText");
-  const gameOver = document.getElementById("gameOver");
-  const finalScore = document.getElementById("finalScore");
-  const retryBtn = document.getElementById("retryBtn");
-  const PLAYER_STAND = "sarina-stand.PNG";
-  const PLAYER_ATTACK = "sarina-attack.PNG";
-  const PLAYER_DAMAGE = "sarina-damage.png";
- 
-  let killCount = 0;
-  let attacking = false;
-  let gameEnded = false;
-  let canAttack = false;
-  let bgmStarted = false;
+  <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
 
-  let enemyX = window.innerWidth + 180;
-  const enemySpeed = 4.8;
+  <script>
+    const player = document.getElementById("player");
+    const sword = document.getElementById("sword");
+    const enemy = document.getElementById("enemy");
+    const score = document.getElementById("score");
+    const flash = document.getElementById("flash");
+    const slashText = document.getElementById("slashText");
+    const gameOver = document.getElementById("gameOver");
+    const resultTitle = document.getElementById("resultTitle");
+    const finalScore = document.getElementById("finalScore");
+    const retryBtn = document.getElementById("retryBtn");
+    const bgm = document.getElementById("bgm");
 
-  function enableAttackSoon() {
-    canAttack = false;
-    setTimeout(() => {
-      canAttack = true;
-    }, 700);
-  }
+    const PLAYER_STAND = "sarina-stand.PNG";
+    const PLAYER_ATTACK = "sarina-attack.PNG";
+    const PLAYER_DAMAGE = "sarina-damage.png";
 
-  function resetEnemy() {
-    enemyX = window.innerWidth + Math.random() * 180 + 80;
-    enemy.classList.remove("hit");
-    enemy.style.display = "block";
-    drawEnemy();
-  }
+    let killCount = 0;
+    let attacking = false;
+    let gameEnded = false;
+    let canAttack = false;
+    let bgmStarted = false;
+    let enemyX = window.innerWidth + 180;
 
-  function drawEnemy() {
-    enemy.style.left = enemyX + "px";
-  }
+    const enemySpeed = 4.8;
 
-  function updateEnemy() {
-    if (gameEnded) return;
-
-    enemyX -= enemySpeed;
-    drawEnemy();
-
-    if (enemyX < -80) {
-      resetEnemy();
+    function enableAttackSoon() {
+      canAttack = false;
+      setTimeout(() => {
+        canAttack = true;
+      }, 700);
     }
 
-    checkCollision();
-    requestAnimationFrame(updateEnemy);
-  }
+    function resetEnemy() {
+      enemyX = window.innerWidth + Math.random() * 180 + 80;
+      enemy.classList.remove("hit");
+      enemy.style.display = "block";
+      drawEnemy();
+    }
 
-  function showSword() {
-    sword.style.opacity = "1";
+    function drawEnemy() {
+      enemy.style.left = enemyX + "px";
+    }
 
-    // 頭の上で構える
-    sword.style.transform = "rotate(-170deg) scale(0.3)";
+    function updateEnemy() {
+      if (gameEnded) return;
 
-    setTimeout(() => {
-      // 振り下ろし
-      sword.style.transform = "rotate(-78deg) scale(1)";
-    }, 10);
+      enemyX -= enemySpeed;
+      drawEnemy();
 
-    setTimeout(() => {
-      // 斬り抜け
-      sword.style.transform = "rotate(8deg) scale(1)";
-    }, 120);
+      if (enemyX < -80) {
+        resetEnemy();
+      }
 
-    setTimeout(() => {
-      // リセット
-      sword.style.opacity = "0";
+      checkCollision();
+      requestAnimationFrame(updateEnemy);
+    }
+
+    function showSword() {
+      sword.style.opacity = "1";
       sword.style.transform = "rotate(-170deg) scale(0.3)";
-    }, 240);
-  }
 
-  function attack() {
-    if (!canAttack || attacking || gameEnded) return;
+      setTimeout(() => {
+        sword.style.transform = "rotate(-78deg) scale(1)";
+      }, 10);
 
-    attacking = true;
-    player.classList.add("attack");
-    player.src = PLAYER_ATTACK;
-    showSword();
+      setTimeout(() => {
+        sword.style.transform = "rotate(8deg) scale(1)";
+      }, 120);
 
-    if (navigator.vibrate) navigator.vibrate(18);
+      setTimeout(() => {
+        sword.style.opacity = "0";
+        sword.style.transform = "rotate(-170deg) scale(0.3)";
+      }, 240);
+    }
 
-    const swordBaseX = 156;
-    const swordTipX = 240;
-    const slashLeft = swordBaseX;
-    const slashRight = swordTipX;
+    function attack() {
+      if (!canAttack || attacking || gameEnded) return;
 
-    const enemyLeft = enemyX;
-    const enemyRight = enemyX + 48;
+      attacking = true;
+      player.classList.add("attack");
+      player.src = PLAYER_ATTACK;
+      showSword();
 
-    const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
+      if (navigator.vibrate) navigator.vibrate(18);
 
-    if (inRange) {
-      killCount += 1;
-      score.textContent = killCount;
+      const swordBaseX = 156;
+      const swordTipX = 240;
+      const slashLeft = swordBaseX;
+      const slashRight = swordTipX;
 
-      enemy.classList.add("hit");
+      const enemyLeft = enemyX;
+      const enemyRight = enemyX + 48;
 
-      flash.classList.remove("active");
-      slashText.classList.remove("show");
-      void flash.offsetWidth;
-      void slashText.offsetWidth;
-      flash.classList.add("active");
-      slashText.classList.add("show");
+      const inRange = enemyRight > slashLeft && enemyLeft < slashRight;
 
-      if (killCount >= 10) {
-        gameEnded = true;
+      if (inRange) {
+        killCount += 1;
+        score.textContent = killCount;
+
+        enemy.classList.add("hit");
+
+        flash.classList.remove("active");
+        slashText.classList.remove("show");
+        void flash.offsetWidth;
+        void slashText.offsetWidth;
+        flash.classList.add("active");
+        slashText.classList.add("show");
+
+        if (killCount >= 10) {
+          gameEnded = true;
+          setTimeout(() => {
+            showResult("CLEAR!", "10体撃破成功");
+          }, 180);
+          return;
+        }
+
         setTimeout(() => {
-          window.location.href = "happy.html";
+          resetEnemy();
         }, 180);
-        return;
       }
 
       setTimeout(() => {
-        resetEnemy();
-      }, 180);
+        player.classList.remove("attack");
+        player.src = PLAYER_STAND;
+        attacking = false;
+      }, 260);
     }
 
-    setTimeout(() => {
-  player.classList.remove("attack");
-  player.src = PLAYER_STAND;
-  attacking = false;
-    }, 260);
-  }
-  
-  function checkCollision() {
-    if (gameEnded) return;
-    if (enemy.classList.contains("hit")) return;
-    if (enemyX > window.innerWidth) return;
+    function checkCollision() {
+      if (gameEnded) return;
+      if (enemy.classList.contains("hit")) return;
+      if (enemyX > window.innerWidth) return;
 
-    const playerLeft = 62;
-    const playerRight = 146;
-    const enemyLeft = enemyX;
-    const enemyRight = enemyX + 48;
+      const playerLeft = 62;
+      const playerRight = 146;
+      const enemyLeft = enemyX;
+      const enemyRight = enemyX + 48;
 
-    if (enemyRight > playerLeft + 12 && enemyLeft < playerRight - 8) {
+      if (enemyRight > playerLeft + 12 && enemyLeft < playerRight - 8) {
+        endGame();
+      }
+    }
+
+    function endGame() {
       gameEnded = true;
-      endGame();
+      player.src = PLAYER_DAMAGE;
+
+      setTimeout(() => {
+        showResult("GAME OVER", killCount + "体撃破");
+      }, 900);
     }
-  }
 
-  function endGame() {
-  gameEnded = true;
-  player.src = PLAYER_DAMAGE;
+    function showResult(title, message) {
+      resultTitle.textContent = title;
+      finalScore.textContent = message;
+      gameOver.style.display = "flex";
+    }
 
-  setTimeout(() => {
-    window.location.href = "retry.html";
-  }, 900);
-  }
+    function restartGame() {
+      killCount = 0;
+      score.textContent = "0";
+      gameEnded = false;
+      attacking = false;
+      gameOver.style.display = "none";
+      player.src = PLAYER_STAND;
+      sword.style.opacity = "0";
+      sword.style.transform = "rotate(-170deg) scale(0.3)";
 
-  function restartGame() {
-    killCount = 0;
-    score.textContent = "0";
-    gameEnded = false;
-    attacking = false;
-    gameOver.style.display = "none";
-    player.src = PLAYER_STAND;
-    sword.style.opacity = "0";
-    sword.style.transform = "rotate(-170deg) scale(0.3)";
+      enableAttackSoon();
+      resetEnemy();
+      requestAnimationFrame(updateEnemy);
+    }
+
+    window.addEventListener("pointerdown", () => {
+      attack();
+
+      if (!bgmStarted) {
+        bgm.volume = 0.4;
+        bgm.play().catch(() => {});
+        bgmStarted = true;
+      }
+    });
+
+    retryBtn.addEventListener("pointerdown", (e) => {
+      e.stopPropagation();
+      restartGame();
+    });
 
     enableAttackSoon();
     resetEnemy();
     requestAnimationFrame(updateEnemy);
-  }
-
-window.addEventListener("pointerdown", () => {
-  attack();
-
-  if (!bgmStarted) {
-    const bgm = document.getElementById("bgm");
-
-    bgm.volume = 0.4;
-    bgm.play();
-    bgmStarted = true;
-  }
-});
-
-  retryBtn.addEventListener("pointerdown", (e) => {
-    e.stopPropagation();
-    restartGame();
-  });
-
-  enableAttackSoon();
-  resetEnemy();
-  requestAnimationFrame(updateEnemy);
-  
-</script>
-  <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+  </script>
 </body>
 </html>
