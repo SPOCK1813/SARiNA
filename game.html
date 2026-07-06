@@ -156,10 +156,10 @@
     }
 
     .enemy {
-      position: absolute;
-      bottom: 92px;
-      width: 54px;
-      height: 76px;
+    position: absolute;
+    bottom: 92px;
+    width: 54px;
+    height: 76px;
       object-fit: contain;
       image-rendering: pixelated;
       z-index: 12;
@@ -572,7 +572,7 @@ function attack() {
   const slashRight = 240;
 
   const enemyLeft = enemyX;
-  const enemyRight = enemyX + 54;
+  const enemyRight = enemyX + 80;
 
   const hit =
     enemyRight > slashLeft &&
@@ -641,7 +641,7 @@ function attack() {
   const playerRight = 146;
 
   const enemyLeft = enemyX;
-  const enemyRight = enemyX + 54;
+  const enemyRight = enemyX + 80;
 
   if (
     enemyRight > playerLeft + 12 &&
