@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SARiNA Birthday Comic</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #000;
+  color: #eafff5;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  text-align: center;
+}
+
+.wrap {
+  min-height: 100vh;
+  padding: 48px 16px 60px;
+  background:
+    radial-gradient(circle at top, rgba(0,255,136,0.14), transparent 34%),
+    linear-gradient(to bottom, #000, #020805);
+}
+
+h1 {
+  margin: 0 0 10px;
+  font-size: clamp(32px, 9vw, 56px);
+  letter-spacing: 4px;
+  color: #f2fff8;
+  text-shadow: 0 0 18px rgba(0,255,136,0.6);
+}
+
+.sub {
+  margin-bottom: 28px;
+  color: #9dffca;
+  letter-spacing: 2px;
+  font-size: 13px;
+}
+
+.menu {
+  display: grid;
+  gap: 14px;
+  max-width: 420px;
+  margin: 0 auto 34px;
+}
+
+.menu button,
+.nav button,
+.nav a {
+  display: block;
+  width: 100%;
+  padding: 15px 18px;
+  border-radius: 999px;
+  border: 2px solid #00ff88;
+  background: rgba(0,255,136,0.08);
+  color: #effff6;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+.viewer {
+  display: none;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.episode-title {
+  margin: 0 0 18px;
+  font-size: 24px;
+  color: #baffdc;
+  letter-spacing: 2px;
+}
+
+.comic-img {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  border: 1px solid rgba(0,255,136,0.28);
+  box-shadow: 0 0 28px rgba(0,255,136,0.16);
+  background: #111;
+}
+
+.nav {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+  margin: 24px auto 0;
+}
+
+.back-link {
+  margin-top: 28px;
+  display: inline-block;
+  color: #9dffca;
+  text-decoration: none;
+  font-weight: 700;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <h1>Birthday Comic</h1>
+  <div class="sub">SARiNA 07.08</div>
+
+  <div id="topMenu">
+    <div class="menu">
+      <button onclick="openEpisode(1)">第1話を読む</button>
+      <button onclick="openEpisode(2)">第2話を読む</button>
+      <button onclick="openEpisode(3)">第3話を読む</button>
+      <button onclick="openEpisode(4)">第4話を読む</button>
+    </div>
+
+    <a class="back-link" href="index.html#contents">公開後ページへ戻る</a>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <h2 class="episode-title" id="episodeTitle">第1話</h2>
+    <img class="comic-img" id="comicImage" src="comic1.jpg" alt="comic">
+
+    <div class="nav">
+      <button id="nextBtn" onclick="nextEpisode()">次の話を読む</button>
+      <button onclick="showTop()">漫画トップへ戻る</button>
+      <a href="index.html#contents">公開後ページへ戻る</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const maxEpisode = 4;
+let currentEpisode = 1;
+
+function openEpisode(num) {
+  currentEpisode = num;
+
+  document.getElementById("topMenu").style.display = "none";
+  document.getElementById("viewer").style.display = "block";
+
+  document.getElementById("episodeTitle").textContent = "第" + num + "話";
+  document.getElementById("comicImage").src = "comic" + num + ".jpg";
+
+  updateNextButton();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function nextEpisode() {
+  if (currentEpisode < maxEpisode) {
+    openEpisode(currentEpisode + 1);
+  }
+}
+
+function updateNextButton() {
+  const nextBtn = document.getElementById("nextBtn");
+
+  if (currentEpisode >= maxEpisode) {
+    nextBtn.style.display = "none";
+  } else {
+    nextBtn.style.display = "block";
+    nextBtn.textContent = "次の話を読む";
+  }
+}
+
+function showTop() {
+  document.getElementById("viewer").style.display = "none";
+  document.getElementById("topMenu").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+
+</body>
+</html>
