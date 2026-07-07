@@ -101,18 +101,22 @@ h1 {
   text-decoration: none;
   font-weight: 700;
 }
+
 </style>
 </head>
 
 <body>
+
 <div class="wrap">
 
-  <h1>Birthday Comic</h1>
-  <div class="sub">SARiNA 07.08</div>
+<h1>Birthday Comic</h1>
+<div class="sub">SARiNA 07.08</div>
 
-  <div id="topMenu">
-    <div class="menu">
-   <button onclick="openEpisode(1)">第1話を読む</button>
+<!-- トップメニュー -->
+<div id="topMenu">
+
+<div class="menu">
+<button onclick="openEpisode(1)">第1話を読む</button>
 <button onclick="openEpisode(2)">第2話を読む</button>
 <button onclick="openEpisode(3)">第3話を読む</button>
 <button onclick="openEpisode(4)">第4話を読む</button>
@@ -124,64 +128,218 @@ h1 {
 <button onclick="openEpisode(10)">第10話を読む</button>
 <button onclick="openEpisode(11)">第11話を読む</button>
 <button onclick="openEpisode(12)">第12話を読む</button>
-    </div>
+</div>
 
-    <a class="back-link" href="index.html#contents">公開後ページへ戻る</a>
-  </div>
-
-  <div class="viewer" id="viewer">
-    <h2 class="episode-title" id="episodeTitle">第1話</h2>
-    <img class="comic-img" id="comicImage" src="comic1.jpg" alt="comic">
-
-    <div class="nav">
-      <button id="nextBtn" onclick="nextEpisode()">次の話を読む</button>
-      <button onclick="showTop()">漫画トップへ戻る</button>
-      <a href="index.html#contents">公開後ページへ戻る</a>
-    </div>
-  </div>
+<a class="back-link" href="index.html#contents">
+公開後ページへ戻る
+</a>
 
 </div>
 
-<script>
+<!-- 漫画表示 -->
+<div class="viewer" id="viewer">
+
+<h2 class="episode-title" id="episodeTitle">
+第1話
+</h2>
+
+<img
+id="comicImage"
+class="comic-img"
+src=""
+alt="comic">
+
+<div class="nav">
+
+<button
+id="nextBtn"
+onclick="nextEpisode()">
+次の話を読む
+</button>
+
+<button onclick="showTop()">
+漫画トップへ戻る
+</button>
+
+<a href="index.html#contents">
+公開後ページへ戻る
+</a>
+
+</div>
+
+</div>
+
+<!-- エピローグ -->
+
+<div class="viewer" id="epilogue">
+
+<h2 class="episode-title">
+EPILOGUE
+</h2>
+
+<div style="
+max-width:700px;
+margin:auto;
+text-align:left;
+line-height:2;
+font-size:18px;
+background:#111;
+padding:28px;
+border-radius:18px;
+border:1px solid rgba(0,255,136,.2);
+">
+
+<p>
+
+2026年7月5日
+
+<br><br>
+
+SARiNA 生誕祭。
+
+<br><br>
+
+最高の一日をありがとう。
+
+<br><br><br>
+
+この物語は、
+
+実際にあった出来事をもとに制作しました。
+
+<br><br>
+
+協力してくれた緑組のみんな。
+
+<br><br>
+
+そして、
+
+最高の景色を一緒に作ってくれた皆さんへ。
+
+<br><br>
+
+本当にありがとうございました。
+
+<br><br><br>
+
+―― END ――
+
+</p>
+
+</div>
+
+<div class="nav">
+
+<button onclick="showTop()">
+漫画トップへ戻る
+</button>
+
+<a href="index.html#contents">
+公開後ページへ戻る
+</a>
+
+</div>
+
+</div>
+
+  <script>
+
 const maxEpisode = 12;
 let currentEpisode = 1;
 
 function openEpisode(num) {
+
   currentEpisode = num;
 
   document.getElementById("topMenu").style.display = "none";
   document.getElementById("viewer").style.display = "block";
+  document.getElementById("epilogue").style.display = "none";
 
-  document.getElementById("episodeTitle").textContent = "第" + num + "話";
-  document.getElementById("comicImage").src = "comic" + num + ".jpg";
+  document.getElementById("episodeTitle").textContent =
+    "第" + num + "話";
+
+  const img = document.getElementById("comicImage");
+
+  // 1〜9話はPNG、10〜12話はjpg
+  if (num <= 9) {
+    img.src = "comic" + num + ".PNG";
+  } else {
+    img.src = "comic" + num + ".jpg";
+  }
 
   updateNextButton();
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
 }
 
 function nextEpisode() {
+
   if (currentEpisode < maxEpisode) {
     openEpisode(currentEpisode + 1);
   }
+
 }
 
 function updateNextButton() {
-  const nextBtn = document.getElementById("nextBtn");
 
-  if (currentEpisode >= maxEpisode) {
-    nextBtn.style.display = "none";
-  } else {
+  const nextBtn =
+    document.getElementById("nextBtn");
+
+  if (currentEpisode < maxEpisode) {
+
     nextBtn.style.display = "block";
     nextBtn.textContent = "次の話を読む";
+
+    nextBtn.onclick = function () {
+      nextEpisode();
+    };
+
+  } else {
+
+    nextBtn.style.display = "block";
+    nextBtn.textContent = "おまけを見る";
+
+    nextBtn.onclick = function () {
+      showEpilogue();
+    };
+
   }
+
+}
+
+function showEpilogue() {
+
+  document.getElementById("viewer").style.display = "none";
+
+  document.getElementById("epilogue").style.display = "block";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
 }
 
 function showTop() {
+
   document.getElementById("viewer").style.display = "none";
+
+  document.getElementById("epilogue").style.display = "none";
+
   document.getElementById("topMenu").style.display = "block";
-  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
 }
+
 </script>
 
 </body>
