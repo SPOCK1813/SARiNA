@@ -127,7 +127,7 @@ h1 {
 <button onclick="openEpisode(9)">第9話を読む</button>
 <button onclick="openEpisode(10)">第10話を読む</button>
 <button onclick="openEpisode(11)">第11話を読む</button>
-<button onclick="openEpisode(12)">第12話を読む</button>
+<button onclick="openEpisode(12)">最終話を読む</button>
 </div>
 
 <a class="back-link" href="index.html#contents">
@@ -302,7 +302,7 @@ function updateNextButton() {
   } else {
 
     nextBtn.style.display = "block";
-    nextBtn.textContent = "おまけを見る";
+    nextBtn.textContent = "Epilogueを見る";
 
     nextBtn.onclick = function () {
       showEpilogue();
